@@ -7,5 +7,6 @@ alias ls='ls --color=none -F'
 alias ls="ls -F"
 alias h=history
 alias more=less
+#alias sh='env -u PS1 sh' # fix for git setting pS1
 echo "end ~/.bash_aliases"
 

@@ -41,4 +41,5 @@ gchat() {
   MSYS2_ARG_CONV_EXCL='*' cmd.exe /C "gemini"
 }
 
+export -n PS1
 
