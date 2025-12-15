@@ -1,7 +1,11 @@
-echo start ~ .bashrc
-
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
+
+# If invoked as sh, set a simple prompt and stop here
+if [ "${0##*/}" = "sh" ]; then
+  PS1='[sh] \w$ '
+  return
+fi
 
 # Append to the history file instead of overwriting it
 shopt -s histappend
@@ -33,13 +37,9 @@ if [ -f "${HOME}/.bash_aliases" ]; then
    source "${HOME}/.bash_aliases"
 fi
 
-echo "adding conda."
-. /c/Users/ray/miniconda3/etc/profile.d/conda.sh
-echo "conda added."
+# Load custom functions if the file exists
+if [ -f "${HOME}/dotfiles/bash/bash_functions" ]; then
+   source "${HOME}/dotfiles/bash/bash_functions"
+fi
 
-gchat() {
-  MSYS2_ARG_CONV_EXCL='*' cmd.exe /C "gemini"
-}
-
-export -n PS1
-
+PS1='[bash] \u@\h:\w\$ '

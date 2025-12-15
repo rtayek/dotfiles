@@ -1,12 +1,10 @@
-#set -x
-echo "start ~/.bash_aliases"
 alias egrep='egrep --color=none'
 alias fgrep='fgrep --color=none'
 alias grep='grep --color=none'
-alias ls='ls --color=none -F'
+#alias ls='ls --color=none -F'
 alias ls="ls -F"
 alias h=history
 alias more=less
-#alias sh='env -u PS1 sh' # fix for git setting pS1
-echo "end ~/.bash_aliases"
+alias sh='PS1="[sh] \w$ " sh' # hack!
+
 

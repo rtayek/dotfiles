@@ -1,0 +1,3 @@
+gchat() {
+  winpty gemini.cmd
+}
