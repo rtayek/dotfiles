@@ -1,11 +1,16 @@
-# If not running interactively, don't do anything
-[[ "$-" != *i* ]] && return
 
-# If invoked as sh, set a simple prompt and stop here
-if [ "${0##*/}" = "sh" ]; then
-  PS1='[sh] \w$ '
-  return
-fi
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+# Undo Git-for-Windows exporting prompt junk (prevents sh inheriting it)
+export -n PS1 2>/dev/null || true
+unset PROMPT_COMMAND 2>/dev/null || true
+PS1='\w$ '
+
+export ENV="$HOME/dotfiles/sh/shrc"
+PS1='${PWD##*/}$ '
 
 # Append to the history file instead of overwriting it
 shopt -s histappend
@@ -41,5 +46,3 @@ fi
 if [ -f "${HOME}/dotfiles/bash/bash_functions" ]; then
    source "${HOME}/dotfiles/bash/bash_functions"
 fi
-
-PS1='[bash] \u@\h:\w\$ '

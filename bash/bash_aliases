@@ -5,6 +5,6 @@ alias grep='grep --color=none'
 alias ls="ls -F"
 alias h=history
 alias more=less
-alias sh='PS1="[sh] \w$ " sh' # hack!
+
 
 

@@ -1,0 +1,2 @@
+# ~/dotfiles/sh/shrc
+PS1='[sh] ${PWD##*/}$ '

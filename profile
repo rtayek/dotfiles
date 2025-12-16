@@ -1,6 +1,7 @@
 export LANG=$(locale -uU)
+# Only for interactive sh, not bash
+[ -n "${BASH_VERSION-}" ] && return 0
+[ -n "${PS1-}" ] || return 0
 
-# POSIX prompt only for plain sh/dash
-if [ -z "$BASH_VERSION" ] && [ -z "$ZSH_VERSION" ] && [ -n "$PS1" ]; then
-  PS1='[sh] \w$ '
-fi
+PS1='[sh] ${PWD##*/}$ '
+
