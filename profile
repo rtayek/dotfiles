@@ -4,4 +4,4 @@ export LANG=$(locale -uU)
 [ -n "${PS1-}" ] || return 0
 
 PS1='[sh] ${PWD##*/}$ '
-
+PS1='[sh] \u$ '

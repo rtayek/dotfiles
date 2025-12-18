@@ -10,7 +10,10 @@ unset PROMPT_COMMAND 2>/dev/null || true
 PS1='\w$ '
 
 export ENV="$HOME/dotfiles/sh/shrc"
-PS1='${PWD##*/}$ '
+#PS1='${PWD##*/}$ '
+# readable prompt: green user, blue cwd, normal $
+PS1='\[\e[1;32m\]\u\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \$ '
+
 
 # Append to the history file instead of overwriting it
 shopt -s histappend

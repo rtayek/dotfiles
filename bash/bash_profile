@@ -23,5 +23,5 @@ mypath=$GRADLE_HOME/bin:$mypath
 export mypath
 export PATH=$mypath:$PATH   
 cd $myroot
-if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then . /c/Users/ray/miniconda3/etc/profile.d/conda.sh; fi
+#if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then . /c/Users/ray/miniconda3/etc/profile.d/conda.sh; fi
 
