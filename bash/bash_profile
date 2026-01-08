@@ -16,10 +16,18 @@ if [ -d "${HOME}/info" ]; then
 fi
 
 export myroot=/c/dfromrays8350 # will become /d/
-export GRADLE_HOME=/c/Gradle/gradle-9.1.0
+
 mypath=
 mypath=$myroot/bin:$mypath
+
+export GRADLE_HOME=/c/Gradle/gradle-9.1.0
 mypath=$GRADLE_HOME/bin:$mypath
+
+# Java 25
+//export JAVA_HOME="/c/Program Files/Java/jdk-25.0.1"
+//export PATH="$JAVA_HOME/bin:$mypath"
+
+
 export mypath
 export PATH=$mypath:$PATH   
 cd $myroot

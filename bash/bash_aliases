@@ -5,6 +5,10 @@ alias grep='grep --color=none'
 alias ls="ls -F"
 alias h=history
 alias more=less
+alias gs='git status'
+alias gd='git diff'
+alias gpom='git push origin master'
+
 
 
 
