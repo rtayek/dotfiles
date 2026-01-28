@@ -1,3 +1,7 @@
 *~
 *.swp
 *.swo
+
+# local/runtime
+.envrc
+.bash_history
