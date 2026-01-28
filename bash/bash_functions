@@ -1,3 +1,10 @@
+pathPrepend() {
+  case ":$PATH:" in
+    *":$1:"*) : ;;
+    *) PATH="$1:$PATH" ;;
+  esac
+}
+
 gchat() {
   winpty gemini.cmd
 }

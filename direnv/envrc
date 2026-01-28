@@ -1,0 +1,4 @@
+export HISTFILE="$PWD/.bash_history"
+history -a
+history -c
+history -r

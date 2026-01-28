@@ -1,0 +1,11 @@
+# direnv
+.envrc
+.bash_history
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+*.swp
+*.swo
