@@ -75,15 +75,9 @@ dedupePath
 export PATH
 
 # direnv
-
-eval "$(direnv hook bash)" 
-
-__pc="$PROMPT_COMMAND"
-case ";$__pc;" in
-  *";history -a; history -n;"*) ;;
-  *) PROMPT_COMMAND="history -a; history -n${__pc:+; $__pc}" ;;
-esac
-unset __pc
+eval "$(direnv hook bash)"
+shopt -s histappend
+PROMPT_COMMAND='_direnv_hook;history -a; history -n'
 
 
 
