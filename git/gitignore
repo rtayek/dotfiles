@@ -1,5 +1,6 @@
 # direnv
 .envrc
+.env.secrets
 .bash_history
 
 # OS noise
