@@ -1,0 +1,17 @@
+plugins {
+    id "maven-publish"
+}
+
+group = "com.tayek"
+version = "0.2"
+
+publishing {
+    publications {
+        utilities(MavenPublication) {
+            artifact file("artifacts/utilities-0.2.jar")
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}

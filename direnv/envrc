@@ -1,4 +1,26 @@
-export HISTFILE="$PWD/.bash_history"
-history -a
-history -c
-history -r
+pathAdd() {
+  local d="$1"
+  [ -n "$d" ] || return 0
+  [ -d "$d" ] || return 0
+  case ":$PATH:" in *":$d:"*) ;; *) export PATH="$d:$PATH" ;; esac
+}
+
+useProjectHistory() {
+  export HISTFILE="$PWD/.bash_history"
+  history -a
+  history -c
+  history -r
+}
+
+loadSecretsIfPresent() {
+  local f="${1:-.env.secrets}"
+  [ -f "$f" ] || return 0
+  # shellcheck disable=SC1090
+  source "$f"
+}
+
+loadCentralSecrets() {
+  local f="${1:-$HOME/.secrets/env.llm}"
+  loadSecretsIfPresent "$f"
+}
+
