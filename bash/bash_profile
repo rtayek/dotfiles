@@ -15,6 +15,7 @@ if [ -d "${HOME}/info" ]; then
 fi
 
 #cd $myroot
+cd
 
-#if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then . /c/Users/ray/miniconda3/etc/profile.d/conda.sh; fi
+if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then . /c/Users/ray/miniconda3/etc/profile.d/conda.sh; fi
 

@@ -1,3 +1,4 @@
+#set -x
 # Prevent Git Bash from forcing black background in Windows Terminal
 if [[ -n "$WT_SESSION" ]]; then
   printf '\e]11;?\e\\'

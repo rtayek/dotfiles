@@ -7,6 +7,7 @@ alias h=history
 alias more=less
 alias gs='git status'
 alias gd='git diff'
+alias gd1="git diff --word-diff=color --word-diff-regex='[^[:space:]]+'"
 alias gpom='git push origin master'
 
 
