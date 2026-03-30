@@ -4,6 +4,7 @@ alias grep='grep --color=none'
 #alias ls='ls --color=none -F'
 alias ls="ls -F"
 alias h=history
+alias df="df -h"
 alias more=less
 alias gs='git status'
 alias gd='git diff'
