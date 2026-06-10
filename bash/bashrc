@@ -85,4 +85,7 @@ PROMPT_COMMAND='_direnv_hook;history -a; history -n'
 PROMPT_DIRTRIM=2
 PS1='\u@\h \w \$ '
 
+# Shorter prompt for low vision.
+# Shows only the current directory name.
+PS1='\u@\h \W \$ '
 
