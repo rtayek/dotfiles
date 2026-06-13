@@ -35,16 +35,6 @@ export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls'
 # Path convenience from your original file
 export qv="//sdcard/Download/videos"
 
-# History sync across sessions:
-#   history -a ? append new lines from this session
-#   history -n ? read any new lines from other sessions
-if [[ -n "$PROMPT_COMMAND" ]]; then
-  PROMPT_COMMAND='history -a; history -n; '"$PROMPT_COMMAND"
-else
-  PROMPT_COMMAND='history -a; history -n'
-fi
-export PROMPT_COMMAND
-
 # Load aliases if present
 if [ -f "${HOME}/.bash_aliases" ]; then
    source "${HOME}/.bash_aliases"
@@ -75,10 +65,33 @@ dedupePath
 
 export PATH
 
-# direnv
+# direnv + per-project history
 eval "$(direnv hook bash)"
-shopt -s histappend
-PROMPT_COMMAND='_direnv_hook;history -a; history -n'
+
+__ray_last_histfile="$HISTFILE"
+
+__ray_prompt_command() {
+  history -a
+
+  _direnv_hook
+
+  if [ "$RAY_PROJECT_HISTORY" = "1" ]; then
+    HISTFILE="$PWD/.bash_history"
+  else
+    HISTFILE="$HOME/.bash_history"
+  fi
+  export HISTFILE
+
+  if [ "$HISTFILE" != "$__ray_last_histfile" ]; then
+    history -c
+    [ -f "$HISTFILE" ] && history -r
+    __ray_last_histfile="$HISTFILE"
+  else
+    history -n
+  fi
+}
+
+PROMPT_COMMAND="__ray_prompt_command"
 
 # Short prompt for low vision.
 # Shows only the last two path components.

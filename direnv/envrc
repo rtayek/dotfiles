@@ -6,10 +6,11 @@ pathAdd() {
 }
 
 useProjectHistory() {
-  export HISTFILE="$PWD/.bash_history"
-  history -a
-  history -c
-  history -r
+   export RAY_PROJECT_HISTORY=1
+}
+
+disableProjectHistory() {
+  export RAY_PROJECT_HISTORY=0
 }
 
 loadSecretsIfPresent() {
