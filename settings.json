@@ -2,24 +2,8 @@
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [],
-    "copyFormatting": "none",
-    "copyOnSelect": false,
     "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-    "keybindings": 
-    [
-        {
-            "id": "Terminal.CopyToClipboard",
-            "keys": "ctrl+c"
-        },
-        {
-            "id": "Terminal.PasteFromClipboard",
-            "keys": "ctrl+v"
-        },
-        {
-            "id": "Terminal.DuplicatePaneAuto",
-            "keys": "alt+shift+d"
-        }
-    ],
+    "keybindings": [],
     "newTabMenu": 
     [
         {
@@ -28,65 +12,56 @@
     ],
     "profiles": 
     {
-        "defaults": {},
+        "defaults": 
+        {
+            "font": 
+            {
+                "face": "Lucida Console",
+                "size": 18
+            },
+            "useAcrylic": false
+        },
         "list": 
         [
             {
-                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-                "hidden": false,
-                "name": "Windows PowerShell"
+                "background": "#3A0000",
+                "commandline": "bash.exe",
+                "guid": "{ae23e80d-1089-51ac-bb37-d098950e6dc0}",
+                "name": "Red"
             },
             {
-                "commandline": "%SystemRoot%\\System32\\cmd.exe",
-                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-                "hidden": false,
-                "name": "Command Prompt"
+                "background": "#003A00",
+                "commandline": "bash.exe",
+                "guid": "{443e7975-760f-567d-933f-63ad89b4e6ba}",
+                "name": "Green"
             },
             {
-                "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
-                "hidden": true,
-                "name": "Ubuntu",
-                "source": "Windows.Terminal.Wsl"
+                "background": "#00003A",
+                "commandline": "bash.exe",
+                "guid": "{3109a45d-8f8b-5925-afe3-2e2ce07366ab}",
+                "name": "Blue"
             },
             {
-                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
-                "hidden": false,
-                "name": "Azure Cloud Shell",
-                "source": "Windows.Terminal.Azure"
+                "background": "#003A3A",
+                "commandline": "bash.exe",
+                "guid": "{94829f9a-2bf5-5d83-807f-06fb92f90030}",
+                "name": "Cyan"
             },
             {
-                "guid": "{b1d17205-ff53-572c-a8c0-440e097f9562}",
-                "hidden": false,
-                "name": "Developer Command Prompt for VS 2019",
-                "source": "Windows.Terminal.VisualStudio"
+                "background": "#3A003A",
+                "commandline": "bash.exe",
+                "guid": "{e7a243d3-3889-578f-add4-4b6ef149343c}",
+                "name": "Magenta"
             },
             {
-                "guid": "{03cd8e95-b305-51ed-8742-3c4b98225062}",
-                "hidden": false,
-                "name": "Developer PowerShell for VS 2019",
-                "source": "Windows.Terminal.VisualStudio"
-            },
-            {
-                "guid": "{59d2bd70-f9a6-5353-baf7-81a6b2ad87d7}",
-                "hidden": false,
-                "name": "Python Command Prompt",
-                "source": "ArcGIS"
-            },
-            {
-                "guid": "{fea976f5-39b2-537a-8a7b-95271ca92755}",
-                "hidden": false,
-                "name": "Ubuntu-24.04",
-                "source": "Microsoft.WSL"
-            },
-            {
-                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
-                "hidden": false,
-                "name": "Ubuntu",
-                "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
+                "background": "#3A3A00",
+                "commandline": "bash.exe",
+                "guid": "{ce2fdf21-4eb3-5889-aba7-53eedafa9d22}",
+                "name": "Yellow"
             }
         ]
     },
     "schemes": [],
-    "themes": []
+    "themes": [],
+    "warning.confirmCloseAllTabs": false
 }
