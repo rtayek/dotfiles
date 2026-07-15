@@ -95,3 +95,11 @@ since it is not a git repo.
 2. If you changed anything in `real/`, run `sh deploy.sh`.
 3. Open a new terminal to pick up changes.
 4. Commit.
+
+## TODO / revisit later
+
+- Review the direnv/.envrc setup: is the .envrc ignore strategy right,
+  and are the helpers in direnv/envrc still what we want?
+- Review the gitignore contents (all three) - prune or add entries.
+- Fill in the real/.gitignore template with a generic project ignore
+  list (Java/Gradle, Python, Node).
