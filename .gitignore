@@ -5,3 +5,6 @@
 # local/runtime
 .envrc
 .bash_history
+.tmp.driveupload/
+*.log
+*.tmp

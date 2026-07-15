@@ -41,8 +41,8 @@ if [ -f "${HOME}/.bash_aliases" ]; then
 fi
 
 # Load custom functions if the file exists
-if [ -f "${HOME}/dotfiles/bash/bash_functions" ]; then
-   source "${HOME}/dotfiles/bash/bash_functions"
+if [ -f "${HOME}/.bash_functions" ]; then
+   source "${HOME}/.bash_functions"
 fi
 
 if [ -d "${HOME}/bin" ] ; then
