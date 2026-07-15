@@ -1,0 +1,9 @@
+# High-Visibility Terminal Settings
+Font=Lucida Console
+FontSize=20
+FontWeight=700
+BoldAsFont=yes
+CursorType=block
+CursorBlinking=yes
+Rows=24
+Columns=80
