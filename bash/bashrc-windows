@@ -1,0 +1,19 @@
+# Prevent Git Bash from forcing a black background in Windows Terminal.
+if [ -n "${WT_SESSION-}" ]; then
+  printf '\e]11;?\e\\'
+fi
+
+if [ -f "${HOME}/.bash_functions-windows" ]; then
+  . "${HOME}/.bash_functions-windows"
+elif [ -f "$HOME/dotfiles/bash/bash_functions-windows" ]; then
+  . "$HOME/dotfiles/bash/bash_functions-windows"
+fi
+
+export myroot="/c/dfromrays8350"
+pathPrepend "$myroot/bin"
+
+export GRADLE_HOME="/c/Gradle/gradle-9.1.0"
+pathPrepend "$GRADLE_HOME/bin"
+
+export JAVA_HOME="/c/Program Files/Java/jdk-25"
+pathPrepend "$JAVA_HOME/bin"

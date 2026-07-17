@@ -1,0 +1,1 @@
+[ -f "$HOME/dotfiles/bash/bash_functions-ubuntu" ] && . "$HOME/dotfiles/bash/bash_functions-ubuntu"

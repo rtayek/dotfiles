@@ -1,6 +1,6 @@
 # dotfiles
 
-Shell and git configuration for Ray's Windows PC (Git Bash).
+Shell and git configuration for Ray's Windows Git Bash and Ubuntu/WSL Bash.
 
 ## The big picture
 
@@ -15,15 +15,19 @@ It copies everything in `real/` to the home directory (except
 
 ## Who's on first (the load chain)
 
-    Git Bash login
+    Bash login
       -> ~/.bash_profile          (stub)
-        -> bash/bash_profile      (real: igncr, conda, man/info paths)
+        -> bash/bash_profile      (real: platform login setup)
           -> ~/.bashrc            (stub)
-            -> bash/bashrc        (real: prompt, history, PATH, direnv)
+            -> bash/bashrc        (real: platform dispatcher)
+              -> bash/bashrc-common
               -> ~/.bash_aliases  (stub)
                 -> bash/bash_aliases
               -> ~/.bash_functions (stub)
                 -> bash/bash_functions
+              -> bash/bashrc-windows or bash/bashrc-ubuntu
+                -> bash/bash_functions-windows or bash/bash_functions-ubuntu
+              -> bash/bashrc-project-history
               -> ENV=sh/shrc      (prompt for plain sh sessions)
 
     Plain sh login
@@ -54,6 +58,8 @@ It copies everything in `real/` to the home directory (except
 | `.bash_profile` | yes       | stub -> bash/bash_profile                 |
 | `.bash_aliases` | yes       | stub -> bash/bash_aliases                 |
 | `.bash_functions` | yes     | stub -> bash/bash_functions               |
+| `.bash_functions-windows` | yes | stub -> bash/bash_functions-windows   |
+| `.bash_functions-ubuntu` | yes | stub -> bash/bash_functions-ubuntu     |
 | `.profile`      | yes       | stub -> profile                           |
 | `.gitconfig`    | yes       | full global git config                    |
 | `.gitignore`    | NO        | template to copy into new projects        |
@@ -62,9 +68,15 @@ It copies everything in `real/` to the home directory (except
 
 - **Low-vision prompt**: short prompt showing only the current
   directory name (see end of bash/bashrc).
+- **Platform split**: common Bash behavior lives in `bash/bashrc-common`;
+  Windows Git Bash behavior lives in `bash/bashrc-windows`; Ubuntu/WSL
+  behavior lives in `bash/bashrc-ubuntu`.
 - **Per-project history**: direnv + PROMPT_COMMAND switch HISTFILE to a
   project-local .bash_history when a project's .envrc calls
   `useProjectHistory`.
+- **Validation**: run `bash tests/validate-shell-startup.sh` to check shell
+  syntax, platform separation, bootstrap targets, prompt, history, and
+  preserved Windows paths.
 - **Secrets**: never in this repo. Projects load them via
   `loadCentralSecrets` from ~/.secrets/ (see direnv/envrc).
 
