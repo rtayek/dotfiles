@@ -25,6 +25,10 @@ assert_not_contains() {
   esac
 }
 
+assert_line_equals() {
+  printf '%s\n' "$1" | grep -Fxq "$2" || fail "$3"
+}
+
 make_test_home() {
   local home_dir=$1
   mkdir -p "$home_dir"
@@ -49,6 +53,8 @@ run_startup_probe() {
 
   HOME="$home_dir" \
   PATH="/usr/bin:/bin" \
+  JAVA_HOME= \
+  GRADLE_HOME= \
   RAY_DOTFILES_UNAME_S="$uname_s" \
   RAY_DOTFILES_OS_ID="$os_id" \
   bash --noprofile --norc -i -c "
@@ -71,6 +77,24 @@ run_startup_probe() {
   " 2>/dev/null
 }
 
+run_project_history_unset_probe() {
+  local home_dir=$1
+
+  HOME="$home_dir" \
+  PATH="/usr/bin:/bin" \
+  JAVA_HOME= \
+  GRADLE_HOME= \
+  RAY_DOTFILES_UNAME_S=Linux \
+  RAY_DOTFILES_OS_ID=ubuntu \
+  bash --noprofile --norc -i -c "
+    set -u
+    unset RAY_PROJECT_HISTORY
+    . '$repo_root/bash/bashrc' >/dev/null
+    __ray_prompt_command
+    printf 'project_history_unset=ok\n'
+  " 2>/dev/null
+}
+
 syntax_files=(
   "$repo_root/bash/bash_profile"
   "$repo_root/bash/bashrc"
@@ -82,6 +106,7 @@ syntax_files=(
   "$repo_root/bash/bash_functions"
   "$repo_root/bash/bash_functions-windows"
   "$repo_root/bash/bash_functions-ubuntu"
+  "$repo_root/direnv/envrc"
 )
 
 for file in "${syntax_files[@]}"; do
@@ -107,6 +132,20 @@ grep -Fq 'set -o igncr' "$repo_root/bash/bash_profile" || fail "Windows igncr ha
 grep -Fq '/c/Users/ray/miniconda3/etc/profile.d/conda.sh' "$repo_root/bash/bash_profile" || fail "Windows Conda path changed"
 pass "Windows login-profile igncr and Conda path are preserved"
 
+direnv_helper_path="direnv/envrc"
+stale_direnv_helper_path="${direnv_helper_path}.txt"
+
+[ -f "$repo_root/$direnv_helper_path" ] || fail "$direnv_helper_path is missing"
+[ ! -e "$repo_root/$stale_direnv_helper_path" ] || fail "$stale_direnv_helper_path should not exist"
+pass "direnv helper library uses direnv/envrc"
+
+if grep -RIn "${stale_direnv_helper_path}" "$repo_root" --exclude-dir=.git >/dev/null; then
+  fail "stale ${stale_direnv_helper_path} reference found"
+fi
+
+grep -RIn 'direnv/envrc' "$repo_root/README.md" "$repo_root/direnv/readme.txt" "$repo_root/direnv/envrc" >/dev/null || fail "direnv/envrc is not documented or referenced"
+pass "documentation and source references use direnv/envrc"
+
 tmp_root="$(mktemp -d)"
 trap 'rm -rf "$tmp_root"' EXIT
 
@@ -119,6 +158,7 @@ printf 'export RAY_TEST_UBUNTU_CONDA=loaded\n' >"$linux_home/anaconda3/etc/profi
 
 linux_output="$(run_startup_probe "$linux_home" Linux ubuntu)"
 windows_output="$(run_startup_probe "$windows_home" MINGW64_NT-10.0 '')"
+project_history_unset_output="$(run_project_history_unset_probe "$linux_home")"
 
 assert_contains "$linux_output" "PS1=\\u@\\h \\W \\$ " "Linux final prompt changed"
 assert_contains "$windows_output" "PS1=\\u@\\h \\W \\$ " "Windows final prompt changed"
@@ -143,10 +183,13 @@ assert_contains "$windows_output" "function_pathPrepend=yes" "pathPrepend did no
 assert_contains "$windows_output" "function_dedupePath=yes" "dedupePath did not load for Git Bash"
 pass "common aliases and functions load on both platforms"
 
-assert_contains "$linux_output" "JAVA_HOME=" "Linux JAVA_HOME unexpectedly required"
-assert_contains "$linux_output" "GRADLE_HOME=" "Linux GRADLE_HOME unexpectedly required"
+assert_line_equals "$linux_output" "JAVA_HOME=" "Linux JAVA_HOME unexpectedly has a value"
+assert_line_equals "$linux_output" "GRADLE_HOME=" "Linux GRADLE_HOME unexpectedly has a value"
 assert_contains "$linux_output" "RAY_TEST_UBUNTU_CONDA=loaded" "Ubuntu Conda guard did not load existing conda.sh"
 pass "Ubuntu startup does not require JAVA_HOME or GRADLE_HOME"
+
+assert_line_equals "$project_history_unset_output" "project_history_unset=ok" "project history failed when RAY_PROJECT_HISTORY was unset"
+pass "project history hook tolerates unset RAY_PROJECT_HISTORY"
 
 assert_contains "$windows_output" "JAVA_HOME=/c/Program Files/Java/jdk-25" "Windows JAVA_HOME changed"
 assert_contains "$windows_output" "GRADLE_HOME=/c/Gradle/gradle-9.1.0" "Windows GRADLE_HOME changed"

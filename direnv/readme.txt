@@ -1,33 +1,30 @@
-Here are the “other things you can do with direnv” that we covered (the list you told me not to forget), organized the same way:
+`direnv/envrc` is the reusable shell helper library. Project or workspace `.envrc` files call it with:
 
-* **Per-project environment variables**
-  Set `JAVA_HOME`, `GRADLE_OPTS`, `PATH`, feature flags, etc., that appear only inside a project.
+    . "$HOME/dotfiles/direnv/envrc"
 
-* **Toolchain pinning per directory**
-  Lock an old repo to JDK 17 and a new one to JDK 25, without manually switching shells.
+Those `.envrc` files should stay fast, deterministic, and noninteractive.
 
-* **Secrets without committing secrets**
-  `source .env.secrets` (ignored/untracked) to load API keys/tokens locally.
+Project-level uses this setup is meant to support:
 
-* **Derived environment (computed values + setup)**
-  Compute vars from `$PWD`, create dirs (`mkdir -p .logs`), validate assumptions (fail fast if `build.gradle` missing).
+* Per-project environment variables
+  Set `JAVA_HOME`, `GRADLE_OPTS`, `PATH`, feature flags, and similar values only inside the project that needs them.
 
-* **Workspace-level policy with inheritance**
-  One `.envrc` at the workspace root; children inherit, but still get **per-project** behavior via `$PWD`.
+* Toolchain pinning per directory
+  Lock one repo to an older JDK and another to a newer JDK without manually switching shells.
 
-* **Safety rails via explicit trust boundary**
-  Putting “dangerous” env like `AWS_PROFILE=prod` in `.envrc` is safe-ish because it requires `direnv allow`.
+* Gradle settings and cache policy
+  Use helpers such as `useGradleCacheLocal` or `useGradleCacheShared` to decide where Gradle state belongs.
 
-* **Automatic cleanup on exit**
-  When you `cd` out, env changes revert automatically—no “undo” scripts.
+* Per-project history
+  Call `useProjectHistory` from a trusted project or workspace `.envrc` when that directory should use a local `.bash_history`.
 
-* **Conditional behavior by directory type**
-  If `.git/` exists, do X; if `pom.xml`, set Maven flags; if Gradle, set Gradle cache, etc.
+* Secrets without committing secrets
+  Load ignored local files or central secrets with helpers such as `loadSecretsIfPresent` and `loadCentralSecrets`.
 
-* **Multi-tool coordination**
-  Keep Java/Gradle/tests/IDE launches consistent by centralizing env decisions in the project boundary.
+* Workspace-level policy with inheritance
+  A workspace `.envrc` can source the shared library once and apply common policy while projects keep their own deterministic overrides.
 
-* **What not to do with direnv**
-  Avoid slow, interactive, network-y, or heavy side-effect work in `.envrc`. Keep it fast and deterministic.
+* Conditional behavior by directory type
+  Helpers such as `isGitRepo`, `isGradleProject`, and `isMavenProject` keep project checks readable.
 
-If you want, I can turn this into a **ready-to-commit `~/dotfiles/direnv/envrc` library** with a couple of reusable functions (e.g., `useJava`, `useGradleCache`, `useProjectHistory`, `loadSecretsIfPresent`) tailored to your Eclipse/Gradle workflow.
+Avoid slow, interactive, network-dependent, or heavy side-effect work in `.envrc` files.

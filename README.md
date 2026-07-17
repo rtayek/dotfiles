@@ -46,7 +46,7 @@ It copies everything in `real/` to the home directory (except
 | `bash/`           | The actual bash configuration                     |
 | `sh/`             | Prompt for plain sh                               |
 | `git/gitignore`   | Global git excludes (machine-personal stuff)      |
-| `direnv/envrc`    | Shared direnv helpers, sourced by project .envrc  |
+| `direnv/envrc`    | Shared direnv helpers, sourced by project `.envrc` files |
 | `profile`         | Real sh profile                                   |
 | `deploy.sh`       | Copies `real/*` to the home directory             |
 
@@ -74,6 +74,8 @@ It copies everything in `real/` to the home directory (except
 - **Per-project history**: direnv + PROMPT_COMMAND switch HISTFILE to a
   project-local .bash_history when a project's .envrc calls
   `useProjectHistory`.
+- **Direnv helper library**: project or workspace `.envrc` files can load
+  reusable helpers with `. "$HOME/dotfiles/direnv/envrc"`.
 - **Validation**: run `bash tests/validate-shell-startup.sh` to check shell
   syntax, platform separation, bootstrap targets, prompt, history, and
   preserved Windows paths.
