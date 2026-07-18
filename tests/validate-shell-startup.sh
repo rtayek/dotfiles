@@ -55,6 +55,8 @@ run_startup_probe() {
   PATH="/usr/bin:/bin" \
   JAVA_HOME= \
   GRADLE_HOME= \
+  myroot= \
+  WT_SESSION= \
   RAY_DOTFILES_UNAME_S="$uname_s" \
   RAY_DOTFILES_OS_ID="$os_id" \
   bash --noprofile --norc -i -c "
@@ -84,6 +86,8 @@ run_project_history_unset_probe() {
   PATH="/usr/bin:/bin" \
   JAVA_HOME= \
   GRADLE_HOME= \
+  myroot= \
+  WT_SESSION= \
   RAY_DOTFILES_UNAME_S=Linux \
   RAY_DOTFILES_OS_ID=ubuntu \
   bash --noprofile --norc -i -c "

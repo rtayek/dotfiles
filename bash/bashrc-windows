@@ -3,6 +3,8 @@ if [ -n "${WT_SESSION-}" ]; then
   printf '\e]11;?\e\\'
 fi
 
+export RAY_TERMINAL_TITLE_PREFIX=WIN
+
 if [ -f "${HOME}/.bash_functions-windows" ]; then
   . "${HOME}/.bash_functions-windows"
 elif [ -f "$HOME/dotfiles/bash/bash_functions-windows" ]; then

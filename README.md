@@ -68,6 +68,10 @@ It copies everything in `real/` to the home directory (except
 
 - **Low-vision prompt**: short prompt showing only the current
   directory name (see end of bash/bashrc).
+- **Windows Terminal project colors**: `settings.json` keeps project identity
+  in the terminal background color. Git Bash profiles use cyan tabs and Bash
+  titles prefixed with `WIN`; WSL profiles use orange tabs and Bash titles
+  prefixed with `WSL`.
 - **Platform split**: common Bash behavior lives in `bash/bashrc-common`;
   Windows Git Bash behavior lives in `bash/bashrc-windows`; Ubuntu/WSL
   behavior lives in `bash/bashrc-ubuntu`.

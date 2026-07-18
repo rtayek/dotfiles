@@ -1,3 +1,5 @@
+export RAY_TERMINAL_TITLE_PREFIX=WSL
+
 if [ -f "${HOME}/.bash_functions-ubuntu" ]; then
   . "${HOME}/.bash_functions-ubuntu"
 elif [ -f "$HOME/dotfiles/bash/bash_functions-ubuntu" ]; then

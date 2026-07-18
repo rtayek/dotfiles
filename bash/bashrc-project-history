@@ -14,6 +14,8 @@ __ray_prompt_command() {
     eval "$__ray_direnv_prompt_command"
   fi
 
+  ray_update_terminal_title
+
   if [ "${RAY_PROJECT_HISTORY-}" = "1" ]; then
     HISTFILE="$PWD/.bash_history"
   else
@@ -28,6 +30,8 @@ __ray_prompt_command() {
   else
     history -n
   fi
+
+  return 0
 }
 
 PROMPT_COMMAND="__ray_prompt_command"

@@ -29,3 +29,12 @@ fi
 if [ -d "${HOME}/bin" ]; then
   pathPrepend "${HOME}/bin"
 fi
+
+ray_update_terminal_title() {
+  [ -n "${WT_SESSION-}" ] || return 0
+  [ -n "${RAY_TERMINAL_TITLE_PREFIX-}" ] || return 0
+
+  local folder_name="${PWD##*/}"
+  [ -n "$folder_name" ] || folder_name="/"
+  printf '\033]0;%s - %s\007' "$RAY_TERMINAL_TITLE_PREFIX" "$folder_name"
+}
