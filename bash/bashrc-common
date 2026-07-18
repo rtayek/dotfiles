@@ -1,0 +1,40 @@
+# Undo Git-for-Windows exporting prompt junk before plain sh inherits it.
+export -n PS1 2>/dev/null || true
+unset PROMPT_COMMAND 2>/dev/null || true
+
+export ENV="$HOME/dotfiles/sh/shrc"
+
+shopt -s histappend
+
+export HISTFILE="$HOME/.bash_history"
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTCONTROL=ignoredups:erasedups
+export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls'
+
+export qv="//sdcard/Download/videos"
+
+if [ -f "${HOME}/.bash_aliases" ]; then
+  . "${HOME}/.bash_aliases"
+elif [ -f "$__ray_bash_dir/bash_aliases" ]; then
+  . "$__ray_bash_dir/bash_aliases"
+fi
+
+if [ -f "${HOME}/.bash_functions" ]; then
+  . "${HOME}/.bash_functions"
+elif [ -f "$__ray_bash_dir/bash_functions" ]; then
+  . "$__ray_bash_dir/bash_functions"
+fi
+
+if [ -d "${HOME}/bin" ]; then
+  pathPrepend "${HOME}/bin"
+fi
+
+ray_update_terminal_title() {
+  [ -n "${WT_SESSION-}" ] || return 0
+  [ -n "${RAY_TERMINAL_TITLE_PREFIX-}" ] || return 0
+
+  local folder_name="${PWD##*/}"
+  [ -n "$folder_name" ] || folder_name="/"
+  printf '\033]0;%s - %s\007' "$RAY_TERMINAL_TITLE_PREFIX" "$folder_name"
+}

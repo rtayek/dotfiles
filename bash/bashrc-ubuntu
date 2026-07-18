@@ -1,0 +1,15 @@
+export RAY_TERMINAL_TITLE_PREFIX=WSL
+
+if [ -f "${HOME}/.bash_functions-ubuntu" ]; then
+  . "${HOME}/.bash_functions-ubuntu"
+elif [ -f "$HOME/dotfiles/bash/bash_functions-ubuntu" ]; then
+  . "$HOME/dotfiles/bash/bash_functions-ubuntu"
+fi
+
+if [ -d "$HOME/dev" ]; then
+  export RAY_DEV_HOME="$HOME/dev"
+fi
+
+if [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
+  . "$HOME/anaconda3/etc/profile.d/conda.sh"
+fi

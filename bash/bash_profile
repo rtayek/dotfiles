@@ -1,11 +1,17 @@
-## source the users bashrc if it exists
-if [ -n "$BASH_VERSION" ] && [ -f "${HOME}/.bashrc" ]; then
-  . "${HOME}/.bashrc"
+__ray_bash_profile_uname="${RAY_DOTFILES_UNAME_S:-$(uname -s 2>/dev/null || printf unknown)}"
+case "$__ray_bash_profile_uname" in
+  MINGW*|MSYS*) __ray_bash_profile_platform=windows ;;
+  Linux*) __ray_bash_profile_platform=linux ;;
+  *) __ray_bash_profile_platform=unknown ;;
+esac
+
+if [ "$__ray_bash_profile_platform" = windows ]; then
+  set -o igncr 2>/dev/null || true
 fi
 
-set -o igncr
-
-#export SHELLOPTS
+if [ -n "${BASH_VERSION-}" ] && [ -f "${HOME}/.bashrc" ]; then
+  . "${HOME}/.bashrc"
+fi
 
 if [ -d "${HOME}/man" ]; then
   MANPATH="${HOME}/man:${MANPATH}"
@@ -17,5 +23,12 @@ fi
 #cd $myroot
 cd
 
-if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then . /c/Users/ray/miniconda3/etc/profile.d/conda.sh; fi
+case "$__ray_bash_profile_platform" in
+  windows)
+    if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then
+      . /c/Users/ray/miniconda3/etc/profile.d/conda.sh
+    fi
+    ;;
+esac
 
+unset __ray_bash_profile_uname __ray_bash_profile_platform

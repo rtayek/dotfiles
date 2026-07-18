@@ -1,104 +1,57 @@
-#set -x
-# Prevent Git Bash from forcing black background in Windows Terminal
-if [[ -n "$WT_SESSION" ]]; then
-  printf '\e]11;?\e\\'
-fi
-
 case $- in
   *i*) ;;
   *) return ;;
 esac
 
-# Undo Git-for-Windows exporting prompt junk (prevents sh inheriting it)
-export -n PS1 2>/dev/null || true
-unset PROMPT_COMMAND 2>/dev/null || true
-PS1='\w$ '
+__ray_bash_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-export ENV="$HOME/dotfiles/sh/shrc"
-#PS1='${PWD##*/}$ '
-# readable prompt: green user, blue cwd, normal $
-PS1='\[\e[1;32m\]\u\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \$ '
-
-
-# Append to the history file instead of overwriting it
-shopt -s histappend
-
-# History configuration
-export HISTFILE="$HOME/.bash_history"
-export HISTSIZE=10000
-export HISTFILESIZE=20000
-
-# History behavior
-export HISTCONTROL=ignoredups:erasedups
-export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls'
-
-# Path convenience from your original file
-export qv="//sdcard/Download/videos"
-
-# Load aliases if present
-if [ -f "${HOME}/.bash_aliases" ]; then
-   source "${HOME}/.bash_aliases"
-fi
-
-# Load custom functions if the file exists
-if [ -f "${HOME}/.bash_functions" ]; then
-   source "${HOME}/.bash_functions"
-fi
-
-if [ -d "${HOME}/bin" ] ; then
-   pathPrepend "${HOME}/bin"
-fi
-
-export myroot="/c/dfromrays8350"
-pathPrepend "$myroot/bin"
-
-export GRADLE_HOME="/c/Gradle/gradle-9.1.0"
-pathPrepend "$GRADLE_HOME/bin"
-
-export JAVA_HOME="/c/Program Files/Java/jdk-25"
-pathPrepend "$JAVA_HOME/bin"
-
-dedupePath() {
-  PATH="$(printf '%s' "$PATH" | awk -v RS=: '!seen[$0]++ {printf "%s%s", (out++?":":""), $0}')"
+ray_shell_platform() {
+  case "${RAY_DOTFILES_UNAME_S:-$(uname -s 2>/dev/null || printf unknown)}" in
+    MINGW*) printf '%s\n' mingw ;;
+    MSYS*) printf '%s\n' msys ;;
+    Linux*) printf '%s\n' linux ;;
+    *) printf '%s\n' unknown ;;
+  esac
 }
-dedupePath
 
+ray_linux_distribution() {
+  if [ -n "${RAY_DOTFILES_OS_ID-}" ]; then
+    printf '%s\n' "$RAY_DOTFILES_OS_ID"
+    return
+  fi
+
+  if [ -r /etc/os-release ]; then
+    (
+      . /etc/os-release
+      printf '%s\n' "${ID:-linux}"
+    )
+    return
+  fi
+
+  printf '%s\n' linux
+}
+
+__ray_shell_platform="$(ray_shell_platform)"
+
+. "$__ray_bash_dir/bashrc-common"
+
+case "$__ray_shell_platform" in
+  mingw|msys)
+    . "$__ray_bash_dir/bashrc-windows"
+    ;;
+  linux)
+    if [ "$(ray_linux_distribution)" = ubuntu ]; then
+      . "$__ray_bash_dir/bashrc-ubuntu"
+    fi
+    ;;
+esac
+
+. "$__ray_bash_dir/bashrc-project-history"
+
+dedupePath
 export PATH
 
-# direnv + per-project history
-eval "$(direnv hook bash)"
-
-__ray_last_histfile="$HISTFILE"
-
-__ray_prompt_command() {
-  history -a
-
-  _direnv_hook
-
-  if [ "$RAY_PROJECT_HISTORY" = "1" ]; then
-    HISTFILE="$PWD/.bash_history"
-  else
-    HISTFILE="$HOME/.bash_history"
-  fi
-  export HISTFILE
-
-  if [ "$HISTFILE" != "$__ray_last_histfile" ]; then
-    history -c
-    [ -f "$HISTFILE" ] && history -r
-    __ray_last_histfile="$HISTFILE"
-  else
-    history -n
-  fi
-}
-
-PROMPT_COMMAND="__ray_prompt_command"
-
-# Short prompt for low vision.
-# Shows only the last two path components.
 PROMPT_DIRTRIM=2
-PS1='\u@\h \w \$ '
-
-# Shorter prompt for low vision.
-# Shows only the current directory name.
 PS1='\u@\h \W \$ '
 
+unset __ray_bash_dir __ray_shell_platform

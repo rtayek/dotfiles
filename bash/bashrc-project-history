@@ -1,0 +1,37 @@
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+  __ray_direnv_prompt_command="${PROMPT_COMMAND-}"
+else
+  __ray_direnv_prompt_command=
+fi
+
+__ray_last_histfile="$HISTFILE"
+
+__ray_prompt_command() {
+  history -a
+
+  if [ -n "$__ray_direnv_prompt_command" ]; then
+    eval "$__ray_direnv_prompt_command"
+  fi
+
+  ray_update_terminal_title
+
+  if [ "${RAY_PROJECT_HISTORY-}" = "1" ]; then
+    HISTFILE="$PWD/.bash_history"
+  else
+    HISTFILE="$HOME/.bash_history"
+  fi
+  export HISTFILE
+
+  if [ "$HISTFILE" != "$__ray_last_histfile" ]; then
+    history -c
+    [ -f "$HISTFILE" ] && history -r
+    __ray_last_histfile="$HISTFILE"
+  else
+    history -n
+  fi
+
+  return 0
+}
+
+PROMPT_COMMAND="__ray_prompt_command"

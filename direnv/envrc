@@ -5,6 +5,18 @@ pathAdd() {
   case ":$PATH:" in *":$d:"*) ;; *) export PATH="$d:$PATH" ;; esac
 }
 
+isGitRepo() {
+  [ -d .git ] || git rev-parse --is-inside-work-tree >/dev/null 2>&1
+}
+
+isGradleProject() {
+  [ -f build.gradle ] || [ -f build.gradle.kts ] || [ -f settings.gradle ] || [ -f settings.gradle.kts ]
+}
+
+isMavenProject() {
+  [ -f pom.xml ]
+}
+
 useProjectHistory() {
    export RAY_PROJECT_HISTORY=1
 }
@@ -25,3 +37,45 @@ loadCentralSecrets() {
   loadSecretsIfPresent "$f"
 }
 
+useJava() {
+  local jh="$1"
+  [ -n "$jh" ] || return 0
+  [ -d "$jh" ] || { echo "direnv: JAVA_HOME not found: $jh" >&2; return 1; }
+  export JAVA_HOME="$jh"
+  pathAdd "$JAVA_HOME/bin"
+}
+
+useJavaFromFile() {
+  local f="${1:-.java-home}"
+  [ -f "$f" ] || return 0
+  local jh
+  jh="$(tr -d '\r\n' < "$f")"
+  useJava "$jh"
+}
+
+useGradleCacheLocal() {
+  export GRADLE_USER_HOME="$PWD/.gradle"
+}
+
+useGradleCacheShared() {
+  local d="$1"
+  [ -n "$d" ] || return 0
+  mkdir -p "$d" 2>/dev/null || true
+  export GRADLE_USER_HOME="$d"
+}
+
+useNodeBin() {
+  pathAdd "$PWD/node_modules/.bin"
+}
+
+requireFile() {
+  local f="$1"
+  local msg="${2:-Missing required file: $f}"
+  [ -f "$f" ] || { echo "direnv: $msg" >&2; return 1; }
+}
+
+requireDir() {
+  local d="$1"
+  local msg="${2:-Missing required directory: $d}"
+  [ -d "$d" ] || { echo "direnv: $msg" >&2; return 1; }
+}

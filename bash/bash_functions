@@ -5,6 +5,6 @@ pathPrepend() {
   esac
 }
 
-gchat() {
-  winpty gemini.cmd
+dedupePath() {
+  PATH="$(printf '%s' "$PATH" | awk -v RS=: '!seen[$0]++ {printf "%s%s", (out++?":":""), $0}')"
 }
