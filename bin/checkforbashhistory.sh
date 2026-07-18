@@ -3,7 +3,6 @@
 find . -type d -name .git -print |
 while IFS= read -r g; do
   repo=$(dirname "$g")
-  if git -C "$repo" ls-files | grep -qF '.bash_history'; then
+  git -C "$repo" ls-files | grep -qF '.bash_history' &&
     echo "FOUND in $repo"
-  fi
 done

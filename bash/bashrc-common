@@ -26,9 +26,8 @@ elif [ -f "$__ray_bash_dir/bash_functions" ]; then
   . "$__ray_bash_dir/bash_functions"
 fi
 
-if [ -d "${HOME}/bin" ]; then
-  pathPrepend "${HOME}/bin"
-fi
+[ -d "${HOME}/bin" ] && pathPrepend "${HOME}/bin"
+[ -d "${HOME}/dotfiles/bin" ] && pathPrepend "${HOME}/dotfiles/bin"
 
 ray_update_terminal_title() {
   [ -n "${WT_SESSION-}" ] || return 0

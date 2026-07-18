@@ -10,10 +10,10 @@
 
 root="${1:-.}"
 
-if [ ! -d "$root" ]; then
+[ -d "$root" ] || {
     echo "error: not a directory: $root" >&2
     exit 1
-fi
+}
 
 find "$root" -type d -name .git -prune -print | while IFS= read -r gitdir
 do

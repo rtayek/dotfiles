@@ -1,7 +1,5 @@
 # Prevent Git Bash from forcing a black background in Windows Terminal.
-if [ -n "${WT_SESSION-}" ]; then
-  printf '\e]11;?\e\\'
-fi
+[ -n "${WT_SESSION-}" ] && printf '\e]11;?\e\\'
 
 export RAY_TERMINAL_TITLE_PREFIX=WIN
 

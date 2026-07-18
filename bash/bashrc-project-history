@@ -10,9 +10,8 @@ __ray_last_histfile="$HISTFILE"
 __ray_prompt_command() {
   history -a
 
-  if [ -n "$__ray_direnv_prompt_command" ]; then
+  [ -n "$__ray_direnv_prompt_command" ] &&
     eval "$__ray_direnv_prompt_command"
-  fi
 
   ray_update_terminal_title
 

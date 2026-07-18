@@ -9,19 +9,17 @@ if [ "$__ray_bash_profile_platform" = windows ]; then
   set -o igncr 2>/dev/null || true
 fi
 
-if [ -n "${BASH_VERSION-}" ] && [ -f "${HOME}/.bashrc" ]; then
-  . "${HOME}/.bashrc"
+if [ -n "${BASH_VERSION-}" ]; then
+  if [ -f "${HOME}/.bashrc" ]; then
+    . "${HOME}/.bashrc"
+  fi
 fi
 
-if [ -d "${HOME}/man" ]; then
-  MANPATH="${HOME}/man:${MANPATH}"
-fi
-if [ -d "${HOME}/info" ]; then
-  INFOPATH="${HOME}/info:${INFOPATH}"
-fi
+[ -d "${HOME}/man" ] && MANPATH="${HOME}/man:${MANPATH}"
+[ -d "${HOME}/info" ] && INFOPATH="${HOME}/info:${INFOPATH}"
 
 #cd $myroot
-cd
+cd || return
 
 case "$__ray_bash_profile_platform" in
   windows)

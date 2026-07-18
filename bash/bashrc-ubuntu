@@ -6,10 +6,7 @@ elif [ -f "$HOME/dotfiles/bash/bash_functions-ubuntu" ]; then
   . "$HOME/dotfiles/bash/bash_functions-ubuntu"
 fi
 
-if [ -d "$HOME/dev" ]; then
-  export RAY_DEV_HOME="$HOME/dev"
-fi
+[ -d "$HOME/dev" ] && export RAY_DEV_HOME="$HOME/dev"
 
-if [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
+[ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ] &&
   . "$HOME/anaconda3/etc/profile.d/conda.sh"
-fi
