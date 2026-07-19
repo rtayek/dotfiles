@@ -9,30 +9,147 @@ echo "Building a fresh, high-visibility settings template..."
 # Writes a perfectly structured, complete configuration file straight to dotfiles
 cat << 'JSON' > "$REPO_JSON"
 {
-    "$schema": "https://aka.ms",
-    "confirmCloseAllTabs": false,
-    "profiles":
-    {
-        "defaults":
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": [],
+    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+    "keybindings": [],
+    "newTabMenu": 
+    [
         {
-            "fontSize": 18,
-            "fontFace": "Lucida Console",
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles": 
+    {
+        "defaults": 
+        {
+            "font": 
+            {
+                "face": "Lucida Console",
+                "size": 18
+            },
             "useAcrylic": false
         },
-        "list":
+        "list": 
         [
-            { "name": "Red", "commandline": "bash.exe", "background": "#3a0000" },
-            { "name": "Green", "commandline": "bash.exe", "background": "#003a00" },
-            { "name": "Blue", "commandline": "bash.exe", "background": "#00003a" },
-            { "name": "Cyan", "commandline": "bash.exe", "background": "#003a3a" },
-            { "name": "Magenta", "commandline": "bash.exe", "background": "#3a003a" },
-            { "name": "Yellow", "commandline": "bash.exe", "background": "#3a3a00" }
+            {
+                "background": "#3A0000",
+                "commandline": "bash.exe",
+                "guid": "{ae23e80d-1089-51ac-bb37-d098950e6dc0}",
+                "name": "Red",
+                "suppressApplicationTitle": false,
+                "tabColor": "#008CCF",
+                "tabTitle": "WIN"
+            },
+            {
+                "background": "#003A00",
+                "commandline": "bash.exe",
+                "guid": "{443e7975-760f-567d-933f-63ad89b4e6ba}",
+                "name": "Green",
+                "suppressApplicationTitle": false,
+                "tabColor": "#008CCF",
+                "tabTitle": "WIN"
+            },
+            {
+                "background": "#00003A",
+                "commandline": "bash.exe",
+                "guid": "{3109a45d-8f8b-5925-afe3-2e2ce07366ab}",
+                "name": "Blue",
+                "suppressApplicationTitle": false,
+                "tabColor": "#008CCF",
+                "tabTitle": "WIN"
+            },
+            {
+                "background": "#003A3A",
+                "commandline": "bash.exe",
+                "guid": "{94829f9a-2bf5-5d83-807f-06fb92f90030}",
+                "name": "Cyan",
+                "suppressApplicationTitle": false,
+                "tabColor": "#008CCF",
+                "tabTitle": "WIN"
+            },
+            {
+                "background": "#3A003A",
+                "commandline": "bash.exe",
+                "guid": "{e7a243d3-3889-578f-add4-4b6ef149343c}",
+                "name": "Magenta",
+                "suppressApplicationTitle": false,
+                "tabColor": "#008CCF",
+                "tabTitle": "WIN"
+            },
+            {
+                "background": "#3A3A00",
+                "commandline": "bash.exe",
+                "guid": "{ce2fdf21-4eb3-5889-aba7-53eedafa9d22}",
+                "name": "Yellow",
+                "suppressApplicationTitle": false,
+                "tabColor": "#008CCF",
+                "tabTitle": "WIN"
+            },
+            {
+                "background": "#3A0000",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{e3d9c166-3109-5f72-a4bc-6f267f4942a0}",
+                "name": "WSL Red",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL"
+            },
+            {
+                "background": "#003A00",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{fc9f9de8-ea73-5968-83a4-44ba6caf5cc2}",
+                "name": "WSL Green",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL"
+            },
+            {
+                "background": "#00003A",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{c6685ab1-17d7-5ab4-9110-d7f7ed9a0b59}",
+                "name": "WSL Blue",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL"
+            },
+            {
+                "background": "#003A3A",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{c830f5de-3a87-572d-a1ca-52c6d2b88ed4}",
+                "name": "WSL Cyan",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL"
+            },
+            {
+                "background": "#3A003A",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{801bfbe9-9865-5bb9-b56c-9f372b00cb85}",
+                "name": "WSL Magenta",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL"
+            },
+            {
+                "background": "#3A3A00",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{3f3c46e6-2930-521a-a23d-a45364e417b6}",
+                "name": "WSL Yellow",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL"
+            }
         ]
-    }
+    },
+    "schemes": [],
+    "themes": [],
+    "warning.confirmCloseAllTabs": false
 }
 JSON
 
 echo "Copying fresh color profiles straight to the active Windows directory..."
 cp "$REPO_JSON" "$SYSTEM_JSON"
 
-echo "Success! Your 6 color-coded profiles are live with a massive 18pt font."
+echo "Success! Your 12 color-coded profiles (Git Bash & WSL) are live with a massive 18pt font."
