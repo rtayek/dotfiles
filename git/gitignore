@@ -8,5 +8,6 @@
 Thumbs.db
 
 # Editors / IDEs
+.settings/
 *.swp
 *.swo
