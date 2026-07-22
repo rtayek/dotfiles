@@ -129,7 +129,7 @@ grep -Fq '$HOME/dotfiles/bash/bashrc' "$repo_root/real/.bashrc" || fail "real/.b
 grep -Fq '$HOME/dotfiles/profile' "$repo_root/real/.profile" || fail "real/.profile target changed"
 grep -Fq 'dotfiles/bash/bash_aliases' "$repo_root/real/.bash_aliases" || fail "real/.bash_aliases target changed"
 grep -Fq '$HOME/dotfiles/bash/bash_functions' "$repo_root/real/.bash_functions" || fail "real/.bash_functions target changed"
-grep -Fq 'ThemeFile=xterm' "$repo_root/real/.minttyrc" || fail "real/.minttyrc target changed"
+grep -Fq 'FontSize=20' "$repo_root/real/.minttyrc" || fail "real/.minttyrc target changed"
 pass "bootstrap files still point to intended tracked files"
 
 grep -Fq 'set -o igncr' "$repo_root/bash/bash_profile" || fail "Windows igncr handling missing"

@@ -17,3 +17,7 @@ pathPrepend "$GRADLE_HOME/bin"
 
 export JAVA_HOME="/c/Program Files/Java/jdk-25"
 pathPrepend "$JAVA_HOME/bin"
+
+antigravity_bin="/c/Users/ray/AppData/Local/agy/bin"
+[ -d "$antigravity_bin" ] && pathPrepend "$antigravity_bin"
+unset antigravity_bin
