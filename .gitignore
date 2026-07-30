@@ -5,6 +5,8 @@
 # local/runtime
 .envrc
 .bash_history
+.gradle/
+build/
 .tmp.driveupload/
 *.log
 *.tmp

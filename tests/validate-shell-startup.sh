@@ -61,6 +61,7 @@ run_startup_probe() {
   RAY_DOTFILES_OS_ID="$os_id" \
   bash --noprofile --norc -i -c "
     . '$repo_root/bash/bashrc' >/dev/null
+    printf 'HOME=%s\n' \"\$HOME\"
     printf 'PS1=%s\n' \"\$PS1\"
     printf 'PATH=%s\n' \"\$PATH\"
     printf 'JAVA_HOME=%s\n' \"\${JAVA_HOME-}\"
@@ -72,9 +73,28 @@ run_startup_probe() {
     type pathPrepend >/dev/null 2>&1 && printf 'function_pathPrepend=yes\n'
     type dedupePath >/dev/null 2>&1 && printf 'function_dedupePath=yes\n'
     type gchat >/dev/null 2>&1 && printf 'function_gchat=yes\n'
+    printf 'HISTFILE=%s\n' \"\$HISTFILE\"
     printf 'HISTSIZE=%s\n' \"\$HISTSIZE\"
     printf 'HISTFILESIZE=%s\n' \"\$HISTFILESIZE\"
     printf 'HISTCONTROL=%s\n' \"\$HISTCONTROL\"
+    printf 'ENV=%s\n' \"\$ENV\"
+  " 2>/dev/null
+}
+
+run_ubuntu_windows_home_probe() {
+  HOME=/c/Users/ray \
+  USER=ray \
+  PATH="/usr/bin:/bin" \
+  JAVA_HOME= \
+  GRADLE_HOME= \
+  myroot= \
+  WT_SESSION= \
+  RAY_DOTFILES_UNAME_S=Linux \
+  RAY_DOTFILES_OS_ID=ubuntu \
+  bash --noprofile --norc -i -c "
+    . '$repo_root/bash/bashrc' >/dev/null
+    printf 'HOME=%s\n' \"\$HOME\"
+    printf 'HISTFILE=%s\n' \"\$HISTFILE\"
     printf 'ENV=%s\n' \"\$ENV\"
   " 2>/dev/null
 }
@@ -162,7 +182,15 @@ printf 'export RAY_TEST_UBUNTU_CONDA=loaded\n' >"$linux_home/anaconda3/etc/profi
 
 linux_output="$(run_startup_probe "$linux_home" Linux ubuntu)"
 windows_output="$(run_startup_probe "$windows_home" MINGW64_NT-10.0 '')"
+ubuntu_windows_home_output="$(run_ubuntu_windows_home_probe)"
 project_history_unset_output="$(run_project_history_unset_probe "$linux_home")"
+
+assert_line_equals "$linux_output" "HOME=$linux_home" "Ubuntu HOME changed when already Linux-local"
+assert_line_equals "$ubuntu_windows_home_output" "HOME=/home/ray" "Ubuntu HOME was not reset from Windows home"
+assert_line_equals "$ubuntu_windows_home_output" "HISTFILE=/home/ray/.bash_history" "Ubuntu HISTFILE used Windows home"
+assert_line_equals "$ubuntu_windows_home_output" "ENV=/home/ray/dotfiles/sh/shrc" "Ubuntu ENV used Windows home"
+assert_not_contains "$ubuntu_windows_home_output" "/c/Users/ray" "Ubuntu startup kept a Windows home path"
+pass "Ubuntu startup resets imported Windows HOME before deriving paths"
 
 assert_contains "$linux_output" "PS1=\\u@\\h \\W \\$ " "Linux final prompt changed"
 assert_contains "$windows_output" "PS1=\\u@\\h \\W \\$ " "Windows final prompt changed"

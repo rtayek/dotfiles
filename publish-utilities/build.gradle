@@ -5,10 +5,33 @@ plugins {
 group = "com.tayek"
 version = "0.2"
 
+def defaultUtilitiesJar = new File(
+    System.getProperty("user.home"),
+    "eclipse-workspace/util/build/libs/utilities-0.0.jar"
+)
+def utilitiesJar = project.hasProperty("utilitiesJar")
+    ? file(project.property("utilitiesJar"))
+    : defaultUtilitiesJar
+
+tasks.register("verifyUtilitiesJar") {
+    doLast {
+        if (!utilitiesJar.isFile()) {
+            throw new GradleException(
+                "Missing utilities jar: ${utilitiesJar}. " +
+                "Build the util project first, or pass -PutilitiesJar=/path/to/utilities.jar."
+            )
+        }
+    }
+}
+
+tasks.matching { it.name.startsWith("publish") }.configureEach {
+    dependsOn("verifyUtilitiesJar")
+}
+
 publishing {
     publications {
         utilities(MavenPublication) {
-            artifact file("artifacts/utilities-0.2.jar")
+            artifact utilitiesJar
         }
     }
     repositories {
