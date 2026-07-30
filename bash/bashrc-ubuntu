@@ -8,5 +8,7 @@ fi
 
 [ -d "$HOME/dev" ] && export RAY_DEV_HOME="$HOME/dev"
 
+export RAY_EXPECTED_WSL_DISTRO="Ubuntu"
+
 [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ] &&
   . "$HOME/anaconda3/etc/profile.d/conda.sh"
