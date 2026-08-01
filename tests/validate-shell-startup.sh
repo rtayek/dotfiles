@@ -82,7 +82,9 @@ run_startup_probe() {
 }
 
 run_ubuntu_windows_home_probe() {
-  HOME=/c/Users/ray \
+  local windows_home_value=$1
+
+  HOME="$windows_home_value" \
   USER=ray \
   PATH="/usr/bin:/bin" \
   JAVA_HOME= \
@@ -97,6 +99,49 @@ run_ubuntu_windows_home_probe() {
     printf 'HISTFILE=%s\n' \"\$HISTFILE\"
     printf 'ENV=%s\n' \"\$ENV\"
   " 2>/dev/null
+}
+
+run_ubuntu_windows_home_stub_probe() {
+  local linux_home=$1
+  local windows_home=$2
+  local windows_home_value=$3
+
+  mkdir -p "$windows_home"
+  cp "$repo_root/real/.bashrc" "$windows_home/.bashrc"
+
+  HOME="$windows_home_value" \
+  USER=ray \
+  PATH="/usr/bin:/bin" \
+  JAVA_HOME= \
+  GRADLE_HOME= \
+  myroot= \
+  WT_SESSION= \
+  RAY_DOTFILES_LINUX_HOME="$linux_home" \
+  RAY_DOTFILES_UNAME_S=Linux \
+  RAY_DOTFILES_OS_ID=ubuntu \
+  bash --noprofile --norc -i -c "
+    . '$windows_home/.bashrc' >/dev/null
+    printf 'HOME=%s\n' \"\$HOME\"
+    printf 'HISTFILE=%s\n' \"\$HISTFILE\"
+    printf 'ENV=%s\n' \"\$ENV\"
+  " 2>/dev/null
+}
+
+run_ubuntu_windows_home_deploy_probe() {
+  local linux_home=$1
+  local windows_home_value=$2
+
+  HOME="$windows_home_value" \
+  USER=ray \
+  PATH="/usr/bin:/bin" \
+  RAY_DOTFILES_LINUX_HOME="$linux_home" \
+  RAY_DOTFILES_UNAME_S=Linux \
+  sh "$repo_root/deploy.sh" >/dev/null
+
+  [ -f "$linux_home/.bashrc" ] || fail "deploy did not copy .bashrc to Linux home"
+  [ -f "$linux_home/.bash_profile" ] || fail "deploy did not copy .bash_profile to Linux home"
+  cmp -s "$repo_root/real/.bashrc" "$linux_home/.bashrc" || fail "deployed .bashrc differs from real/.bashrc"
+  cmp -s "$repo_root/real/.bash_profile" "$linux_home/.bash_profile" || fail "deployed .bash_profile differs from real/.bash_profile"
 }
 
 run_project_history_unset_probe() {
@@ -163,7 +208,9 @@ stale_direnv_helper_path="${direnv_helper_path}.txt"
 [ ! -e "$repo_root/$stale_direnv_helper_path" ] || fail "$stale_direnv_helper_path should not exist"
 pass "direnv helper library uses direnv/envrc"
 
-if grep -RIn "${stale_direnv_helper_path}" "$repo_root" --exclude-dir=.git >/dev/null; then
+if grep -RIn "${stale_direnv_helper_path}" "$repo_root" \
+  --exclude-dir=.git \
+  --exclude-dir=.tmp.driveupload >/dev/null; then
   fail "stale ${stale_direnv_helper_path} reference found"
 fi
 
@@ -177,20 +224,35 @@ linux_home="$tmp_root/linux-home"
 windows_home="$tmp_root/windows-home"
 make_test_home "$linux_home"
 make_test_home "$windows_home"
+mkdir -p "$linux_home/dotfiles"
+ln -s "$repo_root/bash" "$linux_home/dotfiles/bash"
+ln -s "$repo_root/sh" "$linux_home/dotfiles/sh"
 mkdir -p "$linux_home/bin" "$linux_home/dev" "$linux_home/anaconda3/etc/profile.d"
 printf 'export RAY_TEST_UBUNTU_CONDA=loaded\n' >"$linux_home/anaconda3/etc/profile.d/conda.sh"
 
 linux_output="$(run_startup_probe "$linux_home" Linux ubuntu)"
 windows_output="$(run_startup_probe "$windows_home" MINGW64_NT-10.0 '')"
-ubuntu_windows_home_output="$(run_ubuntu_windows_home_probe)"
 project_history_unset_output="$(run_project_history_unset_probe "$linux_home")"
 
 assert_line_equals "$linux_output" "HOME=$linux_home" "Ubuntu HOME changed when already Linux-local"
-assert_line_equals "$ubuntu_windows_home_output" "HOME=/home/ray" "Ubuntu HOME was not reset from Windows home"
-assert_line_equals "$ubuntu_windows_home_output" "HISTFILE=/home/ray/.bash_history" "Ubuntu HISTFILE used Windows home"
-assert_line_equals "$ubuntu_windows_home_output" "ENV=/home/ray/dotfiles/sh/shrc" "Ubuntu ENV used Windows home"
-assert_not_contains "$ubuntu_windows_home_output" "/c/Users/ray" "Ubuntu startup kept a Windows home path"
+for windows_home_value in /c/Users/ray /mnt/c/Users/ray /mnt/c/users/ray 'C:\Users\ray'; do
+  ubuntu_windows_home_output="$(run_ubuntu_windows_home_probe "$windows_home_value")"
+  assert_line_equals "$ubuntu_windows_home_output" "HOME=/home/ray" "Ubuntu HOME was not reset from Windows home: $windows_home_value"
+  assert_line_equals "$ubuntu_windows_home_output" "HISTFILE=/home/ray/.bash_history" "Ubuntu HISTFILE used Windows home: $windows_home_value"
+  assert_line_equals "$ubuntu_windows_home_output" "ENV=/home/ray/dotfiles/sh/shrc" "Ubuntu ENV used Windows home: $windows_home_value"
+  assert_not_contains "$ubuntu_windows_home_output" "$windows_home_value" "Ubuntu startup kept a Windows home path: $windows_home_value"
+done
 pass "Ubuntu startup resets imported Windows HOME before deriving paths"
+
+ubuntu_windows_home_stub_output="$(run_ubuntu_windows_home_stub_probe "$linux_home" "$windows_home" /mnt/c/users/ray)"
+assert_line_equals "$ubuntu_windows_home_stub_output" "HOME=$linux_home" "Ubuntu stub did not load dotfiles from Linux home"
+assert_line_equals "$ubuntu_windows_home_stub_output" "HISTFILE=$linux_home/.bash_history" "Ubuntu stub HISTFILE used Windows home"
+assert_line_equals "$ubuntu_windows_home_stub_output" "ENV=$linux_home/dotfiles/sh/shrc" "Ubuntu stub ENV used Windows home"
+assert_not_contains "$ubuntu_windows_home_stub_output" "$windows_home" "Ubuntu stub kept a Windows home path"
+pass "Ubuntu deployed stub reaches Linux dotfiles even when HOME starts wrong"
+
+run_ubuntu_windows_home_deploy_probe "$linux_home" /mnt/c/users/ray
+pass "deploy targets Linux home when Ubuntu HOME starts as Windows home"
 
 assert_contains "$linux_output" "PS1=\\u@\\h \\W \\$ " "Linux final prompt changed"
 assert_contains "$windows_output" "PS1=\\u@\\h \\W \\$ " "Windows final prompt changed"
