@@ -8,6 +8,8 @@
 Thumbs.db
 
 # Editors / IDEs
-.settings/
+#.classpath
+.#project
+.#settings/
 *.swp
 *.swo
