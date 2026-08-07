@@ -25,7 +25,7 @@
         [
             {
                 "background": "#3A0000",
-                "commandline": "bash.exe",
+				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{ae23e80d-1089-51ac-bb37-d098950e6dc0}",
                 "name": "Red",
                 "suppressApplicationTitle": false,
@@ -34,7 +34,7 @@
             },
             {
                 "background": "#003A00",
-                "commandline": "bash.exe",
+				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{443e7975-760f-567d-933f-63ad89b4e6ba}",
                 "name": "Green",
                 "suppressApplicationTitle": false,
@@ -43,7 +43,7 @@
             },
             {
                 "background": "#00003A",
-                "commandline": "bash.exe",
+				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{3109a45d-8f8b-5925-afe3-2e2ce07366ab}",
                 "name": "Blue",
                 "suppressApplicationTitle": false,
@@ -52,7 +52,7 @@
             },
             {
                 "background": "#003A3A",
-                "commandline": "bash.exe",
+				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{94829f9a-2bf5-5d83-807f-06fb92f90030}",
                 "name": "Cyan",
                 "suppressApplicationTitle": false,
@@ -61,7 +61,7 @@
             },
             {
                 "background": "#3A003A",
-                "commandline": "bash.exe",
+				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{e7a243d3-3889-578f-add4-4b6ef149343c}",
                 "name": "Magenta",
                 "suppressApplicationTitle": false,
@@ -70,7 +70,7 @@
             },
             {
                 "background": "#3A3A00",
-                "commandline": "bash.exe",
+				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{ce2fdf21-4eb3-5889-aba7-53eedafa9d22}",
                 "name": "Yellow",
                 "suppressApplicationTitle": false,

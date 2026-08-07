@@ -11,5 +11,6 @@ Thumbs.db
 #.classpath
 .#project
 .#settings/
+.gradle-build/
 *.swp
 *.swo
