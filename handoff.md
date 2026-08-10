@@ -66,19 +66,32 @@ Git Bash:
 * tab title prefix: `WIN`
 * cyan tab color
 
-Ubuntu / WSL:
+Ubuntu 24.04 / WSL (`wsl.exe -d Ubuntu-24.04`, the primary distro):
 
-* tab title prefix: `WSL`
+* tab title prefix: `WSL24`
 * orange tab color
+
+Old Ubuntu 22.04 distro (`wsl.exe -d Ubuntu`, kept reachable for continuity):
+
+* tab title prefix: `OLD`
+* purple tab color
 
 Typical titles become:
 
 ```
 WIN - dotfiles
-WSL - myclaw
+WSL24 - myclaw
 ```
 
-This allows identical project colors to exist in both Windows and WSL while remaining visually distinguishable.
+This allows identical project colors to exist in every environment while remaining visually distinguishable.
+
+The `WSL ___` profiles previously targeted `wsl.exe -d Ubuntu` — the old 22.04 distro — by mistake. They are now `WSL24 ___` and target `Ubuntu-24.04`.
+
+Open question: whether the old `Ubuntu` (22.04) distro should eventually be uninstalled and the `Ubuntu ___` profiles removed.
+
+### Deployment
+
+`deploy.sh` deploys `settings.json` to the live Windows Terminal path (`%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`) when running under Windows/Git Bash, in addition to copying the `real/.*` dotfiles to `$HOME`.
 
 ---
 

@@ -32,4 +32,17 @@ for f in "$REAL_DIR"/.[!.]* "$REAL_DIR"/..?*; do
     printf 'copied %s -> %s\n' "$name" "$ray_deploy_target_home/$name"
 done
 
+# Deploy Windows Terminal settings when running under Windows.
+case "$ray_deploy_uname" in
+    MINGW*|MSYS*|CYGWIN*)
+        wt_state_dir="${LOCALAPPDATA:-}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState"
+        if [ -d "$wt_state_dir" ]; then
+            cp -p -- "$SCRIPT_DIR/settings.json" "$wt_state_dir/settings.json"
+            printf 'copied settings.json -> %s\n' "$wt_state_dir/settings.json"
+        else
+            printf 'skipped settings.json: Windows Terminal LocalState not found\n'
+        fi
+        ;;
+esac
+
 printf '%s\n' "done."
