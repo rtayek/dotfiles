@@ -4,24 +4,24 @@
     "actions": [],
     "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
     "keybindings": [],
-    "newTabMenu": 
+    "newTabMenu":
     [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": 
+    "profiles":
     {
-        "defaults": 
+        "defaults":
         {
-            "font": 
+            "font":
             {
                 "face": "Lucida Console",
                 "size": 18
             },
             "useAcrylic": false
         },
-        "list": 
+        "list":
         [
             {
                 "background": "#3A0000",
@@ -79,57 +79,111 @@
             },
             {
                 "background": "#3A0000",
-                "commandline": "wsl.exe -d Ubuntu",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
                 "guid": "{e3d9c166-3109-5f72-a4bc-6f267f4942a0}",
-                "name": "WSL Red",
+                "name": "WSL24 Red",
                 "suppressApplicationTitle": false,
                 "tabColor": "#FF8C00",
-                "tabTitle": "WSL"
+                "tabTitle": "WSL24"
+            },
+            {
+                "background": "#003A00",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
+                "guid": "{fc9f9de8-ea73-5968-83a4-44ba6caf5cc2}",
+                "name": "WSL24 Green",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL24"
+            },
+            {
+                "background": "#00003A",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
+                "guid": "{c6685ab1-17d7-5ab4-9110-d7f7ed9a0b59}",
+                "name": "WSL24 Blue",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL24"
+            },
+            {
+                "background": "#003A3A",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
+                "guid": "{c830f5de-3a87-572d-a1ca-52c6d2b88ed4}",
+                "name": "WSL24 Cyan",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL24"
+            },
+            {
+                "background": "#3A003A",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
+                "guid": "{801bfbe9-9865-5bb9-b56c-9f372b00cb85}",
+                "name": "WSL24 Magenta",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL24"
+            },
+            {
+                "background": "#3A3A00",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
+                "guid": "{3f3c46e6-2930-521a-a23d-a45364e417b6}",
+                "name": "WSL24 Yellow",
+                "suppressApplicationTitle": false,
+                "tabColor": "#FF8C00",
+                "tabTitle": "WSL24"
+            },
+            {
+                "background": "#3A0000",
+                "commandline": "wsl.exe -d Ubuntu",
+                "guid": "{75b5d0a6-46f6-4891-9084-e959a112d2e8}",
+                "name": "Ubuntu Red",
+                "suppressApplicationTitle": false,
+                "tabColor": "#8C00FF",
+                "tabTitle": "OLD"
             },
             {
                 "background": "#003A00",
                 "commandline": "wsl.exe -d Ubuntu",
-                "guid": "{fc9f9de8-ea73-5968-83a4-44ba6caf5cc2}",
-                "name": "WSL Green",
+                "guid": "{ac8d68b2-0ff8-4142-a2e7-728d8cb30ea7}",
+                "name": "Ubuntu Green",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
-                "tabTitle": "WSL"
+                "tabColor": "#8C00FF",
+                "tabTitle": "OLD"
             },
             {
                 "background": "#00003A",
                 "commandline": "wsl.exe -d Ubuntu",
-                "guid": "{c6685ab1-17d7-5ab4-9110-d7f7ed9a0b59}",
-                "name": "WSL Blue",
+                "guid": "{52b495da-b664-4c19-a14b-3a452e6e31f2}",
+                "name": "Ubuntu Blue",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
-                "tabTitle": "WSL"
+                "tabColor": "#8C00FF",
+                "tabTitle": "OLD"
             },
             {
                 "background": "#003A3A",
                 "commandline": "wsl.exe -d Ubuntu",
-                "guid": "{c830f5de-3a87-572d-a1ca-52c6d2b88ed4}",
-                "name": "WSL Cyan",
+                "guid": "{6814b03e-46df-4377-bf8b-f1e358ccf823}",
+                "name": "Ubuntu Cyan",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
-                "tabTitle": "WSL"
+                "tabColor": "#8C00FF",
+                "tabTitle": "OLD"
             },
             {
                 "background": "#3A003A",
                 "commandline": "wsl.exe -d Ubuntu",
-                "guid": "{801bfbe9-9865-5bb9-b56c-9f372b00cb85}",
-                "name": "WSL Magenta",
+                "guid": "{cc7a514e-968e-4413-9de4-39fc121e845e}",
+                "name": "Ubuntu Magenta",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
-                "tabTitle": "WSL"
+                "tabColor": "#8C00FF",
+                "tabTitle": "OLD"
             },
             {
                 "background": "#3A3A00",
                 "commandline": "wsl.exe -d Ubuntu",
-                "guid": "{3f3c46e6-2930-521a-a23d-a45364e417b6}",
-                "name": "WSL Yellow",
+                "guid": "{bdeaba58-9389-456b-bf78-8f21cf9a801a}",
+                "name": "Ubuntu Yellow",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
-                "tabTitle": "WSL"
+                "tabColor": "#8C00FF",
+                "tabTitle": "OLD"
             }
         ]
     },
