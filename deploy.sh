@@ -24,13 +24,30 @@ for f in "$REAL_DIR"/.[!.]* "$REAL_DIR"/..?*; do
     [ -f "$f" ] || continue
 
     name=$(basename -- "$f")
-
-    # .gitignore is a template only; do not deploy it.
-    [ "$name" = ".gitignore" ] && continue
-
     cp -p -- "$f" "$ray_deploy_target_home/$name"
     printf 'copied %s -> %s\n' "$name" "$ray_deploy_target_home/$name"
 done
+
+git_platform_config=
+case "$ray_deploy_uname" in
+    MINGW*|MSYS*|CYGWIN*)
+        git_platform_config=gitconfig-windows
+        ;;
+    Linux*)
+        git_platform_config=gitconfig-ubuntu
+        ;;
+esac
+
+gitconfig_target="$ray_deploy_target_home/.gitconfig"
+{
+    printf '%s\n' '[include]'
+    printf '%s\n' '    path = ~/dotfiles/git/gitconfig-common'
+    if [ -n "$git_platform_config" ]; then
+        printf '%s\n' '[include]'
+        printf '    path = ~/dotfiles/git/%s\n' "$git_platform_config"
+    fi
+} > "$gitconfig_target"
+printf 'generated .gitconfig -> %s\n' "$gitconfig_target"
 
 # Deploy Windows Terminal settings when running under Windows.
 case "$ray_deploy_uname" in
