@@ -85,14 +85,15 @@ Everything in `real/` is deployed to the target home directory.
   platform-only settings live in `git/gitconfig-windows` or
   `git/gitconfig-ubuntu`. `deploy.sh` generates `~/.gitconfig` with the
   appropriate includes.
-- **Per-project history**: direnv + PROMPT_COMMAND switch HISTFILE to a
-  project-local `.bash_history` when a project's `.envrc` calls
-  `useProjectHistory`.
+- **Per-project history**: a project's `.envrc` calls `useProjectHistory`.
+  That captures the directory where it was called and keeps one
+  `.bash_history` there while shells move through subdirectories.
 - **Direnv helper library**: `.envrc` is normal tracked configuration when it
   contains portable project setup. This repository's tracked `.envrc` loads
-  `~/dotfiles/direnv/envrc`.
-- **Secrets**: never in this repo. Projects load them via
-  `loadCentralSecrets` from `~/.secrets/` (see direnv/envrc).
+  `~/dotfiles/direnv/envrc` and explicitly opts into project history.
+- **Secrets**: never in this repo. Projects that actually need API keys or
+  other credentials explicitly call `loadCentralSecrets`; projects that do
+  not need secrets do not load them.
 
 ## Validation
 
@@ -101,6 +102,7 @@ Run:
     bash tests/validate-shell-startup.sh
     bash tests/validate-terminal-settings.sh
     bash tests/validate-git-config.sh
+    bash tests/validate-project-history.sh
 
 The validators check shell syntax and startup behavior, terminal configuration,
 platform separation, project history behavior, Git configuration separation,
@@ -128,7 +130,8 @@ Eclipse metadata is not globally ignored. Whether `.project`, `.classpath`,
 and `.settings/` are tracked is decided per repository.
 
 The tracked `.envrc` in this repository is reusable configuration, not private
-state. It simply loads the shared direnv helper library.
+state. It loads the shared direnv helper library and calls `useProjectHistory`.
+Secret loading and other environment behavior are explicit opt-ins.
 
 ## Editing workflow
 
@@ -148,7 +151,8 @@ state. It simply loads the shared direnv helper library.
   should open a dedicated browser window with that project's LLMs, GitHub page,
   and other useful web resources. Keep project URL sets in small configuration
   files rather than creating one-off launcher scripts for every project.
-- Review the semantics of the shared direnv helpers and project `.envrc` use.
+- Replace or supplement the machine-specific `.java-home` mechanism with a
+  portable project Java-version mechanism when multiple JDKs become necessary.
 - Review the Windows-only global attributes file currently referenced as
   `C:/Users/ray/.config/git/attributes`; decide later whether it belongs in
   this repository.

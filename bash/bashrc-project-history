@@ -15,8 +15,8 @@ __ray_prompt_command() {
 
   ray_update_terminal_title
 
-  if [ "${RAY_PROJECT_HISTORY-}" = "1" ]; then
-    HISTFILE="$PWD/.bash_history"
+  if [ "${RAY_PROJECT_HISTORY-}" = "1" ] && [ -n "${RAY_PROJECT_HISTORY_FILE-}" ]; then
+    HISTFILE="$RAY_PROJECT_HISTORY_FILE"
   else
     HISTFILE="$HOME/.bash_history"
   fi
