@@ -1,16 +1,45 @@
-# direnv
-.envrc
-.env.secrets
-.bash_history
-
-# OS noise
+# macOS
 .DS_Store
-Thumbs.db
+.AppleDouble
+.LSOverride
 
-# Editors / IDEs
-#.classpath
-.#project
-.#settings/
-.gradle-build/
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor backup and swap files
+*~
 *.swp
 *.swo
+*.bak
+
+# Vim
+.Session.vim
+.netrwhist
+
+# Emacs
+\#*\#
+.\#*
+
+# VS Code local history
+.history/
+
+# JetBrains local state
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf/
+
+# JVM crash dumps
+hs_err_pid*
+replay_pid*
+
+# Shell history
+.bash_history
+
+# Git Bash and Windows crash dumps
+*.stackdump
+
+# Personal secrets safety net
+.env

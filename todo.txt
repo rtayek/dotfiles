@@ -1,0 +1,3 @@
+migrate a common set of gitignore file conttents to the proptotype in git/conttents
+
+update the gitignore files in each project to reflect this.

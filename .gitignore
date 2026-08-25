@@ -1,12 +1,9 @@
-*~
-*.swp
-*.swo
+# OpenClaw runtime files
+openclaw.json.tmp
+openclaw.log
 
-# local/runtime
-.envrc
-.bash_history
-.gradle/
-build/
+# Gradle-generated files
+publish-utilities/.gradle/
+publish-utilities/build/
+
 .tmp.driveupload/
-*.log
-*.tmp
