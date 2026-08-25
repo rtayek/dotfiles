@@ -8,6 +8,14 @@ A feature branch was developed, tested, merged into `master`, and pushed.
 
 The repository is currently in a clean state.
 
+## Current working arrangement (2026-08-25)
+
+Dotfiles work is handled in the main dotfiles chat.
+
+The WSL development migration is currently being worked on in a separate chat.
+This is an organizational convenience, not a change to the dotfiles project's
+goals or priorities.
+
 ---
 
 # Primary Direction

@@ -1,0 +1,7 @@
+# Windows / Git Bash-specific Git settings.
+
+[core]
+	attributesfile = C:/Users/ray/.config/git/attributes
+
+[safe]
+	directory = G:/pt

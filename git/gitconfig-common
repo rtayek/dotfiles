@@ -1,16 +1,15 @@
 [user]
 	email = rtayek@gmail.com
 	name = rtayek
+
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
-[safe]
-	directory = G:/pt
+
 [core]
 	autocrlf = input
 	safecrlf = warn
-	attributesfile = C:/Users/ray/.config/git/attributes
 	eol = lf
-	excludesfile = C:/Users/ray/dotfiles/git/gitignore
+	excludesfile = ~/dotfiles/git/gitignore
