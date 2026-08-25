@@ -144,6 +144,10 @@ state. It simply loads the shared direnv helper library.
 
 ## TODO / revisit later
 
+- Build a project browser/workspace launcher: one command per major project
+  should open a dedicated browser window with that project's LLMs, GitHub page,
+  and other useful web resources. Keep project URL sets in small configuration
+  files rather than creating one-off launcher scripts for every project.
 - Review the semantics of the shared direnv helpers and project `.envrc` use.
 - Review the Windows-only global attributes file currently referenced as
   `C:/Users/ray/.config/git/attributes`; decide later whether it belongs in
