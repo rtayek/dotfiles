@@ -7,3 +7,7 @@ Each project may contain a self-contained `project-home.html`. That page defines
 The prototype demonstrated that this approach works without requiring a shell launcher, separate URL configuration, or browser extension. Additional automation can be considered later if rebuilding groups manually becomes burdensome.
 
 Current links and presentation details belong only in `project-home.html`; they should not be duplicated here.
+
+## Deferred direction
+
+Explore optional spatial organization across browser windows and monitors if groups alone do not make project ownership and location sufficiently clear.
