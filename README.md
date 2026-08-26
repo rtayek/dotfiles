@@ -52,6 +52,8 @@ deploys `settings.json` to Windows Terminal.
 | `git/gitconfig-ubuntu`  | Ubuntu/WSL-specific Git settings |
 | `git/gitignore`         | Global Git excludes: personal workstation noise and safety defaults |
 | `direnv/envrc`          | Shared direnv helpers, sourced by project `.envrc` files |
+| `docs/`                 | Durable human-facing project notes |
+| `.llm/`                 | Agent working context, handoffs, and reusable LLM material |
 | `profile`               | Real sh profile |
 | `deploy.sh`             | Deploys home stubs, Git config includes, and Windows Terminal settings |
 
@@ -108,6 +110,16 @@ Git ignore policy, and generated Git include stubs.
 
 `tests/validate-publish-utilities.sh` additionally validates the local
 publish-utilities Gradle workflow when its external utilities JAR is available.
+
+## Markdown and LLM context
+
+Root Markdown is reserved for entry points such as `README.md`, `AGENTS.md`,
+and provider-specific bootstrap files. Durable notes for human maintainers live
+in `docs/`. Agent working state lives in `.llm/`, with current state in
+`.llm/working-context.md` and prior handoffs in `.llm/handoffs/`.
+
+The root `human.md` and `persona.md` files may be shared links. Preserve that
+behavior unless there is a practical reason to change it.
 
 ## Git ignore policy
 
