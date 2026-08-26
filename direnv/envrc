@@ -23,11 +23,13 @@ isMavenProject() {
 }
 
 useProjectHistory() {
-   export RAY_PROJECT_HISTORY=1
+  export RAY_PROJECT_HISTORY=1
+  export RAY_PROJECT_HISTORY_FILE="$PWD/.bash_history"
 }
 
 disableProjectHistory() {
   export RAY_PROJECT_HISTORY=0
+  unset RAY_PROJECT_HISTORY_FILE
 }
 
 loadSecretsIfPresent() {
