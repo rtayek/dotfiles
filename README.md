@@ -115,13 +115,18 @@ publish-utilities Gradle workflow when its external utilities JAR is available.
 
 ## Markdown and LLM context
 
-Root Markdown is reserved for entry points such as `README.md`, `AGENTS.md`,
-and provider-specific bootstrap files. Durable notes for human maintainers live
-in `docs/`. Agent working state lives in `.llm/`, with current state in
-`.llm/working-context.md` and prior handoffs in `.llm/handoffs/`.
+The stable LLM entry chain is:
 
-The root `human.md` and `persona.md` files may be shared links. Preserve that
-behavior unless there is a practical reason to change it.
+    CLAUDE.md -> AGENTS.md -> .llm/index.md
+
+`CLAUDE.md` and `AGENTS.md` are small compatibility entry points for tools that
+expect those filenames. `.llm/index.md` is the project-controlled dispatcher:
+it decides which working context, handoffs, documentation, tests, or other files
+matter for the current project.
+
+The exact organization behind `.llm/index.md` may evolve from project to project.
+Durable human-facing documentation belongs in the root or `docs/`; LLM-specific
+working material may live under `.llm/` when that is useful.
 
 ## Git ignore policy
 
