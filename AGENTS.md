@@ -1,1 +1,1 @@
-C:/Users/ray/real-md-files/agents.md
+Read `.llm/index.md` and follow its instructions.
