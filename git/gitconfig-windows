@@ -1,4 +1,5 @@
 # Windows / Git Bash-specific Git settings.
 
-[safe]
-	directory = G:/pt
+[core]
+	hooksPath = C:/Users/ray/.config/global-git-hooks
+	editor = pspad
