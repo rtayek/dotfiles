@@ -13,3 +13,4 @@
 	safecrlf = warn
 	eol = lf
 	excludesfile = ~/dotfiles/git/gitignore
+    attributesfile = ~/dotfiles/git/gitattributes
