@@ -31,7 +31,7 @@ assert_line_equals() {
 
 make_test_home() {
   local home_dir=$1
-  mkdir -p "$home_dir"
+  mkdir -p "$home_dir/man" "$home_dir/info" "$home_dir/bin" "$home_dir/dotfiles/bin"
   cat >"$home_dir/.bash_aliases" <<EOF
 [ -f "$repo_root/bash/bash_aliases" ] && . "$repo_root/bash/bash_aliases"
 EOF
@@ -44,6 +44,35 @@ EOF
   cat >"$home_dir/.bash_functions-ubuntu" <<EOF
 [ -f "$repo_root/bash/bash_functions-ubuntu" ] && . "$repo_root/bash/bash_functions-ubuntu"
 EOF
+  cat >"$home_dir/.bashrc" <<EOF
+[ -f "$repo_root/bash/bashrc" ] && . "$repo_root/bash/bashrc"
+EOF
+  cat >"$home_dir/.profile" <<EOF
+[ -f "$repo_root/profile" ] && . "$repo_root/profile"
+EOF
+}
+
+run_login_probe() {
+  local home_dir=$1
+  local uname_s=$2
+  local os_id=${3:-}
+
+  mkdir -p "$home_dir/some_project"
+  
+  HOME="$home_dir" \
+  PATH="/usr/bin:/bin" \
+  RAY_DOTFILES_UNAME_S="$uname_s" \
+  RAY_DOTFILES_OS_ID="$os_id" \
+  bash --noprofile --norc -i -c "
+    cd '$home_dir/some_project'
+    . '$repo_root/bash/bash_profile'
+    printf 'PWD=%s\n' \"\$PWD\"
+    printf 'PATH=%s\n' \"\$PATH\"
+    printf 'MANPATH=%s\n' \"\${MANPATH-}\"
+    printf 'INFOPATH=%s\n' \"\${INFOPATH-}\"
+    printf 'ENV=%s\n' \"\${ENV-}\"
+    printf 'LANG=%s\n' \"\${LANG-}\"
+  " 2>/dev/null
 }
 
 run_startup_probe() {
@@ -197,8 +226,8 @@ grep -Fq '$HOME/dotfiles/bash/bash_functions' "$repo_root/real/.bash_functions" 
 grep -Fq 'FontSize=20' "$repo_root/real/.minttyrc" || fail "real/.minttyrc target changed"
 pass "bootstrap files still point to intended tracked files"
 
-grep -Fq 'set -o igncr' "$repo_root/bash/bash_profile" || fail "Windows igncr handling missing"
-grep -Fq '/c/Users/ray/miniconda3/etc/profile.d/conda.sh' "$repo_root/bash/bash_profile" || fail "Windows Conda path changed"
+grep -Fq 'set -o igncr' "$repo_root/bash/bashrc-windows" || fail "Windows igncr handling missing"
+grep -Fq '/c/Users/ray/miniconda3/etc/profile.d/conda.sh' "$repo_root/bash/bashrc-windows" || fail "Windows Conda path changed"
 pass "Windows login-profile igncr and Conda path are preserved"
 
 direnv_helper_path="direnv/envrc"
@@ -227,6 +256,7 @@ make_test_home "$windows_home"
 mkdir -p "$linux_home/dotfiles"
 ln -s "$repo_root/bash" "$linux_home/dotfiles/bash"
 ln -s "$repo_root/sh" "$linux_home/dotfiles/sh"
+ln -s "$repo_root/profile" "$linux_home/dotfiles/profile"
 mkdir -p "$linux_home/bin" "$linux_home/dev" "$linux_home/anaconda3/etc/profile.d"
 printf 'export RAY_TEST_UBUNTU_CONDA=loaded\n' >"$linux_home/anaconda3/etc/profile.d/conda.sh"
 
@@ -239,7 +269,6 @@ for windows_home_value in /c/Users/ray /mnt/c/Users/ray /mnt/c/users/ray 'C:\Use
   ubuntu_windows_home_output="$(run_ubuntu_windows_home_probe "$windows_home_value")"
   assert_line_equals "$ubuntu_windows_home_output" "HOME=/home/ray" "Ubuntu HOME was not reset from Windows home: $windows_home_value"
   assert_line_equals "$ubuntu_windows_home_output" "HISTFILE=/home/ray/.bash_history" "Ubuntu HISTFILE used Windows home: $windows_home_value"
-  assert_line_equals "$ubuntu_windows_home_output" "ENV=/home/ray/dotfiles/sh/shrc" "Ubuntu ENV used Windows home: $windows_home_value"
   assert_not_contains "$ubuntu_windows_home_output" "$windows_home_value" "Ubuntu startup kept a Windows home path: $windows_home_value"
 done
 pass "Ubuntu startup resets imported Windows HOME before deriving paths"
@@ -247,7 +276,6 @@ pass "Ubuntu startup resets imported Windows HOME before deriving paths"
 ubuntu_windows_home_stub_output="$(run_ubuntu_windows_home_stub_probe "$linux_home" "$windows_home" /mnt/c/users/ray)"
 assert_line_equals "$ubuntu_windows_home_stub_output" "HOME=$linux_home" "Ubuntu stub did not load dotfiles from Linux home"
 assert_line_equals "$ubuntu_windows_home_stub_output" "HISTFILE=$linux_home/.bash_history" "Ubuntu stub HISTFILE used Windows home"
-assert_line_equals "$ubuntu_windows_home_stub_output" "ENV=$linux_home/dotfiles/sh/shrc" "Ubuntu stub ENV used Windows home"
 assert_not_contains "$ubuntu_windows_home_stub_output" "$windows_home" "Ubuntu stub kept a Windows home path"
 pass "Ubuntu deployed stub reaches Linux dotfiles even when HOME starts wrong"
 
@@ -297,5 +325,23 @@ pass "Windows Java, Gradle, and myroot behavior is preserved"
 assert_contains "$windows_output" "HISTSIZE=10000" "HISTSIZE changed"
 assert_contains "$windows_output" "HISTFILESIZE=20000" "HISTFILESIZE changed"
 assert_contains "$windows_output" "HISTCONTROL=ignoredups:erasedups" "HISTCONTROL changed"
-assert_contains "$windows_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "ENV changed"
-pass "history and ENV settings are preserved"
+pass "history settings are preserved"
+
+windows_login_output="$(run_login_probe "$windows_home" MINGW64_NT-10.0 '')"
+assert_line_equals "$windows_login_output" "PWD=$windows_home/some_project" "Windows login shell changed directories from some_project"
+assert_contains "$windows_login_output" "$windows_home/bin:" "Windows login shell missing HOME/bin in PATH"
+assert_contains "$windows_login_output" "$windows_home/dotfiles/bin:" "Windows login shell missing dotfiles/bin in PATH"
+assert_contains "$windows_login_output" "MANPATH=$windows_home/man:" "Windows login shell missing HOME/man in MANPATH"
+assert_contains "$windows_login_output" "INFOPATH=$windows_home/info:" "Windows login shell missing HOME/info in INFOPATH"
+assert_contains "$windows_login_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "Windows login shell missing ENV"
+assert_contains "$windows_login_output" 'LANG=en_US.UTF-8' "Windows login shell missing LANG"
+
+linux_login_output="$(run_login_probe "$linux_home" Linux ubuntu)"
+assert_line_equals "$linux_login_output" "PWD=$linux_home/some_project" "Linux login shell changed directories from some_project"
+assert_contains "$linux_login_output" "$linux_home/bin:" "Linux login shell missing HOME/bin in PATH"
+assert_contains "$linux_login_output" "$linux_home/dotfiles/bin:" "Linux login shell missing dotfiles/bin in PATH"
+assert_contains "$linux_login_output" "MANPATH=$linux_home/man:" "Linux login shell missing HOME/man in MANPATH"
+assert_contains "$linux_login_output" "INFOPATH=$linux_home/info:" "Linux login shell missing HOME/info in INFOPATH"
+assert_contains "$linux_login_output" 'ENV='"$linux_home"'/dotfiles/sh/shrc' "Linux login shell missing ENV"
+assert_contains "$linux_login_output" 'LANG=en_US.UTF-8' "Linux login shell missing LANG"
+pass "Login shells correctly initialize environments and preserve PWD"

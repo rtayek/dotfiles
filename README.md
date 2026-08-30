@@ -17,7 +17,9 @@ deploys `settings.json` to Windows Terminal.
 
     Bash login
       -> ~/.bash_profile          (stub)
-        -> bash/bash_profile      (real: platform login setup)
+        -> bash/bash_profile      (real: thin Bash dispatcher)
+          -> ~/.profile           (stub)
+            -> profile            (real: portable login environment, PATH, ENV)
           -> ~/.bashrc            (stub)
             -> bash/bashrc        (real: platform dispatcher)
               -> bash/bashrc-common
@@ -28,11 +30,13 @@ deploys `settings.json` to Windows Terminal.
               -> bash/bashrc-windows or bash/bashrc-ubuntu
                 -> bash/bash_functions-windows or bash/bash_functions-ubuntu
               -> bash/bashrc-project-history
-              -> ENV=sh/shrc      (prompt for plain sh sessions)
 
     Plain sh login
       -> ~/.profile               (stub)
-        -> profile                (real: sh prompt)
+        -> profile                (real: portable login environment, PATH, ENV)
+
+    Interactive sh
+      -> ENV=sh/shrc              (real: plain sh behavior)
 
     Any git command
       -> ~/.gitconfig             (generated include stub)
@@ -54,7 +58,7 @@ deploys `settings.json` to Windows Terminal.
 | `direnv/envrc`          | Shared direnv helpers, sourced by project `.envrc` files |
 | `docs/`                 | Durable human-facing project notes |
 | `.llm/`                 | Agent working context, handoffs, and reusable LLM material |
-| `profile`               | Real sh profile |
+| `profile`               | Portable login environment (PATH, ENV, locale) |
 | `deploy.sh`             | Deploys home stubs, Git config includes, and Windows Terminal settings |
 
 ## real/ contents

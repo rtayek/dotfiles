@@ -1,3 +1,10 @@
+# Windows login profile equivalents
+set -o igncr 2>/dev/null || true
+
+if [ -f /c/Users/ray/miniconda3/etc/profile.d/conda.sh ]; then
+  . /c/Users/ray/miniconda3/etc/profile.d/conda.sh
+fi
+
 # Prevent Git Bash from forcing a black background in Windows Terminal.
 [ -n "${WT_SESSION-}" ] && printf '\e]11;?\e\\'
 
