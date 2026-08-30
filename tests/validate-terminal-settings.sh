@@ -21,13 +21,31 @@ const profiles = settings.profiles && Array.isArray(settings.profiles.list)
   ? settings.profiles.list
   : [];
 
-const projects = [
+const colors = [
   ["Red", "#3A0000"],
   ["Green", "#003A00"],
   ["Blue", "#00003A"],
   ["Cyan", "#003A3A"],
   ["Magenta", "#3A003A"],
   ["Yellow", "#3A3A00"],
+];
+
+const families = [
+  {
+    prefix: "",
+    commandline: "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+    tabTitle: "WIN",
+  },
+  {
+    prefix: "WSL24 ",
+    commandline: "wsl.exe -d Ubuntu-24.04",
+    tabTitle: "WSL24",
+  },
+  {
+    prefix: "Ubuntu ",
+    commandline: "wsl.exe -d Ubuntu",
+    tabTitle: "OLD",
+  },
 ];
 
 function fail(message) {
@@ -39,25 +57,25 @@ function findProfile(name) {
   return profiles.find((profile) => profile.name === name);
 }
 
-for (const [project, background] of projects) {
-  const winProfile = findProfile(project);
-  if (!winProfile) fail(`missing Windows Git Bash profile ${project}`);
-  if (winProfile.background !== background) fail(`${project} background changed`);
-  if (winProfile.commandline !== "bash.exe") fail(`${project} commandline changed`);
-  if (winProfile.tabColor !== "#008CCF") fail(`${project} Windows tab color changed`);
-  if (winProfile.tabTitle !== "WIN") fail(`${project} Windows fallback tab title changed`);
-  if (winProfile.suppressApplicationTitle !== false) fail(`${project} does not allow shell title updates`);
+if (profiles.length !== colors.length * families.length) {
+  fail(`expected ${colors.length * families.length} terminal profiles, found ${profiles.length}`);
+}
 
-  const wslProfile = findProfile(`WSL ${project}`);
-  if (!wslProfile) fail(`missing WSL profile WSL ${project}`);
-  if (wslProfile.background !== background) fail(`WSL ${project} background does not match Windows profile`);
-  if (wslProfile.commandline !== "wsl.exe -d Ubuntu") fail(`WSL ${project} commandline changed`);
-  if (wslProfile.tabColor !== "#FF8C00") fail(`WSL ${project} tab color changed`);
-  if (wslProfile.tabTitle !== "WSL") fail(`WSL ${project} fallback tab title changed`);
-  if (wslProfile.suppressApplicationTitle !== false) fail(`WSL ${project} does not allow shell title updates`);
+for (const family of families) {
+  for (const [colorName, colorHex] of colors) {
+    const profileName = `${family.prefix}${colorName}`;
+    const profile = findProfile(profileName);
+
+    if (!profile) fail(`missing profile ${profileName}`);
+    if (profile.background !== colorHex) fail(`${profileName} background changed`);
+    if (profile.tabColor !== colorHex) fail(`${profileName} tab color does not match background`);
+    if (profile.commandline !== family.commandline) fail(`${profileName} commandline changed`);
+    if (profile.tabTitle !== family.tabTitle) fail(`${profileName} fallback tab title changed`);
+    if (profile.suppressApplicationTitle !== false) fail(`${profileName} does not allow shell title updates`);
+  }
 }
 NODE
-pass "Windows Terminal profiles preserve backgrounds, tab colors, and shell-updatable titles"
+pass "Windows Terminal profiles preserve commands, matching colors, and fallback titles"
 
 tmp_root="$(mktemp -d)"
 trap 'rm -rf "$tmp_root"' EXIT
