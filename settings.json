@@ -25,56 +25,56 @@
         [
             {
                 "background": "#3A0000",
-				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{ae23e80d-1089-51ac-bb37-d098950e6dc0}",
                 "name": "Red",
                 "suppressApplicationTitle": false,
-                "tabColor": "#008CCF",
+                "tabColor": "#3A0000",
                 "tabTitle": "WIN"
             },
             {
                 "background": "#003A00",
-				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{443e7975-760f-567d-933f-63ad89b4e6ba}",
                 "name": "Green",
                 "suppressApplicationTitle": false,
-                "tabColor": "#008CCF",
+                "tabColor": "#003A00",
                 "tabTitle": "WIN"
             },
             {
                 "background": "#00003A",
-				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{3109a45d-8f8b-5925-afe3-2e2ce07366ab}",
                 "name": "Blue",
                 "suppressApplicationTitle": false,
-                "tabColor": "#008CCF",
+                "tabColor": "#00003A",
                 "tabTitle": "WIN"
             },
             {
                 "background": "#003A3A",
-				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{94829f9a-2bf5-5d83-807f-06fb92f90030}",
                 "name": "Cyan",
                 "suppressApplicationTitle": false,
-                "tabColor": "#008CCF",
+                "tabColor": "#003A3A",
                 "tabTitle": "WIN"
             },
             {
                 "background": "#3A003A",
-				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{e7a243d3-3889-578f-add4-4b6ef149343c}",
                 "name": "Magenta",
                 "suppressApplicationTitle": false,
-                "tabColor": "#008CCF",
+                "tabColor": "#3A003A",
                 "tabTitle": "WIN"
             },
             {
                 "background": "#3A3A00",
-				"commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe --login -i",
                 "guid": "{ce2fdf21-4eb3-5889-aba7-53eedafa9d22}",
                 "name": "Yellow",
                 "suppressApplicationTitle": false,
-                "tabColor": "#008CCF",
+                "tabColor": "#3A3A00",
                 "tabTitle": "WIN"
             },
             {
@@ -83,7 +83,7 @@
                 "guid": "{e3d9c166-3109-5f72-a4bc-6f267f4942a0}",
                 "name": "WSL24 Red",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
+                "tabColor": "#3A0000",
                 "tabTitle": "WSL24"
             },
             {
@@ -92,7 +92,7 @@
                 "guid": "{fc9f9de8-ea73-5968-83a4-44ba6caf5cc2}",
                 "name": "WSL24 Green",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
+                "tabColor": "#003A00",
                 "tabTitle": "WSL24"
             },
             {
@@ -101,7 +101,7 @@
                 "guid": "{c6685ab1-17d7-5ab4-9110-d7f7ed9a0b59}",
                 "name": "WSL24 Blue",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
+                "tabColor": "#00003A",
                 "tabTitle": "WSL24"
             },
             {
@@ -110,7 +110,7 @@
                 "guid": "{c830f5de-3a87-572d-a1ca-52c6d2b88ed4}",
                 "name": "WSL24 Cyan",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
+                "tabColor": "#003A3A",
                 "tabTitle": "WSL24"
             },
             {
@@ -119,7 +119,7 @@
                 "guid": "{801bfbe9-9865-5bb9-b56c-9f372b00cb85}",
                 "name": "WSL24 Magenta",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
+                "tabColor": "#3A003A",
                 "tabTitle": "WSL24"
             },
             {
@@ -128,7 +128,7 @@
                 "guid": "{3f3c46e6-2930-521a-a23d-a45364e417b6}",
                 "name": "WSL24 Yellow",
                 "suppressApplicationTitle": false,
-                "tabColor": "#FF8C00",
+                "tabColor": "#3A3A00",
                 "tabTitle": "WSL24"
             },
             {
@@ -137,7 +137,7 @@
                 "guid": "{75b5d0a6-46f6-4891-9084-e959a112d2e8}",
                 "name": "Ubuntu Red",
                 "suppressApplicationTitle": false,
-                "tabColor": "#8C00FF",
+                "tabColor": "#3A0000",
                 "tabTitle": "OLD"
             },
             {
@@ -146,7 +146,7 @@
                 "guid": "{ac8d68b2-0ff8-4142-a2e7-728d8cb30ea7}",
                 "name": "Ubuntu Green",
                 "suppressApplicationTitle": false,
-                "tabColor": "#8C00FF",
+                "tabColor": "#003A00",
                 "tabTitle": "OLD"
             },
             {
@@ -155,7 +155,7 @@
                 "guid": "{52b495da-b664-4c19-a14b-3a452e6e31f2}",
                 "name": "Ubuntu Blue",
                 "suppressApplicationTitle": false,
-                "tabColor": "#8C00FF",
+                "tabColor": "#00003A",
                 "tabTitle": "OLD"
             },
             {
@@ -164,7 +164,7 @@
                 "guid": "{6814b03e-46df-4377-bf8b-f1e358ccf823}",
                 "name": "Ubuntu Cyan",
                 "suppressApplicationTitle": false,
-                "tabColor": "#8C00FF",
+                "tabColor": "#003A3A",
                 "tabTitle": "OLD"
             },
             {
@@ -173,7 +173,7 @@
                 "guid": "{cc7a514e-968e-4413-9de4-39fc121e845e}",
                 "name": "Ubuntu Magenta",
                 "suppressApplicationTitle": false,
-                "tabColor": "#8C00FF",
+                "tabColor": "#3A003A",
                 "tabTitle": "OLD"
             },
             {
@@ -182,7 +182,7 @@
                 "guid": "{bdeaba58-9389-456b-bf78-8f21cf9a801a}",
                 "name": "Ubuntu Yellow",
                 "suppressApplicationTitle": false,
-                "tabColor": "#8C00FF",
+                "tabColor": "#3A3A00",
                 "tabTitle": "OLD"
             }
         ]
