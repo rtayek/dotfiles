@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PROJECT_NAME project links</title>
+</head>
+<body>
+  <h1>PROJECT_NAME project links</h1>
+  <ul>
+    <li><a href="BASH_URL" target="_blank">Bash</a></li>
+    <li><a href="file:///C:/Users/ray/bin/web/editor.html" target="_blank">Editor</a></li>
+    <li><a href="CHATGPT_URL" target="_blank">ChatGPT</a></li>
+    <li><a href="CLAUDE_URL" target="_blank">Claude</a></li>
+    <li><a href="https://gemini.google.com/app" target="_blank">Gemini</a></li>
+    <li><a href="GITHUB_URL" target="_blank">GitHub - PROJECT_NAME</a></li>
+  </ul>
+</body>
+</html>
