@@ -19,6 +19,39 @@ pass "project-history shell files have no syntax errors"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT HUP INT TERM
 
+secret_file="$tmp/secrets.env"
+printf '%s\n' 'DOTFILES_SECRET_PROBE=loaded' >"$secret_file"
+
+(
+  # shellcheck disable=SC1091
+  source "$repo_root/direnv/envrc"
+  case "$-" in
+    *a*) fail "test shell unexpectedly started with allexport enabled" ;;
+  esac
+  loadSecretsIfPresent "$secret_file"
+  bash -c '[ "${DOTFILES_SECRET_PROBE-}" = loaded ]' ||
+    fail "loadSecretsIfPresent did not export sourced values to child environments"
+  case "$-" in
+    *a*) fail "loadSecretsIfPresent left allexport enabled" ;;
+  esac
+)
+
+home="$tmp/home"
+mkdir -p "$home/.secrets"
+printf '%s\n' 'DOTFILES_CENTRAL_SECRET_PROBE=loaded' >"$home/.secrets/env.llm"
+
+(
+  HOME="$home"
+  export HOME
+  # shellcheck disable=SC1091
+  source "$repo_root/direnv/envrc"
+  loadCentralSecrets
+  bash -c '[ "${DOTFILES_CENTRAL_SECRET_PROBE-}" = loaded ]' ||
+    fail "loadCentralSecrets did not export sourced values to child environments"
+)
+
+pass "secret helpers export sourced values to child environments"
+
 project_root="$tmp/project"
 mkdir -p "$project_root/src/deeper"
 
@@ -46,7 +79,6 @@ mkdir -p "$project_root/src/deeper"
 )
 pass "useProjectHistory captures one stable project-root history file"
 
-home="$tmp/home"
 mkdir -p "$home"
 
 (

@@ -35,8 +35,16 @@ disableProjectHistory() {
 loadSecretsIfPresent() {
   local f="${1:-.env.secrets}"
   [ -f "$f" ] || return 0
+  local restore_allexport=0
+  case "$-" in
+    *a*) ;;
+    *) restore_allexport=1; set -a ;;
+  esac
   # shellcheck disable=SC1090
   source "$f"
+  local status=$?
+  [ "$restore_allexport" -eq 0 ] || set +a
+  return "$status"
 }
 
 loadCentralSecrets() {
