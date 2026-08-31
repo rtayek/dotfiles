@@ -18,7 +18,7 @@ deploys `settings.json` to Windows Terminal.
     Bash login
       -> ~/.bash_profile          (stub)
         -> bash/bash_profile      (real: thin Bash dispatcher)
-          -> bash/bootstrap       (early igncr, WSL HOME repair)
+          -> bash/bootstrap       (WSL HOME repair)
           -> ~/.profile           (stub)
             -> profile            (POSIX login entry point)
               -> shell/environment (idempotent PATH, ENV policy)

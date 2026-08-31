@@ -119,7 +119,51 @@ run_idempotency_probe() {
 }
 
 
+run_silence_probe() {
+  local home_dir=$1
+  local uname_s=$2
+  local os_id=${3:-}
 
+  (
+    cd "$home_dir/some_project"
+    HOME="$home_dir" \
+    PATH="/usr/bin:/bin" \
+    JAVA_HOME= \
+    GRADLE_HOME= \
+    myroot= \
+    WT_SESSION= \
+    RAY_DOTFILES_UNAME_S="$uname_s" \
+    RAY_DOTFILES_OS_ID="$os_id" \
+    bash --login -i -c "printf 'PROBE_START\n'" 2>&1
+  )
+}
+
+run_nonlogin_inheritance_probe() {
+  local home_dir=$1
+  (
+    cd "$home_dir/some_project"
+    HOME="$home_dir" \
+    PATH="/inherited/path:/usr/bin:/bin" \
+    ENV="/inherited/env" \
+    JAVA_HOME= \
+    GRADLE_HOME= \
+    myroot= \
+    WT_SESSION= \
+    RAY_DOTFILES_UNAME_S=Linux \
+    RAY_DOTFILES_OS_ID=ubuntu \
+    bash -i -c "
+      printf 'PATH=%s\n' \"\$PATH\"
+      printf 'ENV=%s\n' \"\$ENV\"
+    " 2>/dev/null
+  )
+}
+
+# Note: This probe tests the WSL wrong-HOME recovery logic.
+# It manually sources the deployed stub rather than using a genuine `bash --login`
+# because a genuine login shell unconditionally resolves $HOME against the host OS
+# physical filesystem (e.g., C:\Users\ray). When simulating a WSL-mounted Windows path
+# (like /mnt/c/Users/ray) within a Windows Git Bash test runner, the path does not
+# physically exist, causing native login resolution to bypass our mocks.
 run_ubuntu_windows_home_stub_probe() {
   local linux_home=$1
   local windows_home=$2
@@ -319,16 +363,24 @@ pass "history settings are preserved"
 
 windows_login_output="$(run_login_probe "$windows_home" MINGW64_NT-10.0 '')"
 assert_line_equals "$windows_login_output" "PWD=$windows_home/some_project" "Windows login shell changed directories from some_project"
-assert_contains "$windows_login_output" "$windows_home/bin:" "Windows login shell missing HOME/bin in PATH"
-assert_contains "$windows_login_output" "$windows_home/dotfiles/bin:" "Windows login shell missing dotfiles/bin in PATH"
+if ! printf '%s\n' "$windows_login_output" | grep -q "PATH=\(.*:\)\?$windows_home/dotfiles/bin:$windows_home/bin:"; then
+  fail "Windows login shell did not put Windows home paths at the front (after system paths): $windows_login_output"
+fi
 assert_contains "$windows_login_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "Windows login shell missing ENV"
 
 linux_login_output="$(run_login_probe "$linux_home" Linux ubuntu)"
 assert_line_equals "$linux_login_output" "PWD=$linux_home/some_project" "Linux login shell changed directories from some_project"
-assert_contains "$linux_login_output" "$linux_home/bin:" "Linux login shell missing HOME/bin in PATH"
-assert_contains "$linux_login_output" "$linux_home/dotfiles/bin:" "Linux login shell missing dotfiles/bin in PATH"
+if ! printf '%s\n' "$linux_login_output" | grep -q "^PATH=$linux_home/dotfiles/bin:$linux_home/bin:"; then
+  fail "Linux login shell did not put Linux home paths at the front of PATH: $linux_login_output"
+fi
 assert_contains "$linux_login_output" 'ENV='"$linux_home"'/dotfiles/sh/shrc' "Linux login shell missing ENV"
 pass "Login shells correctly initialize environments and preserve PWD"
+
+linux_silence_output="$(run_silence_probe "$linux_home" Linux ubuntu | grep -v 'cannot set terminal process group' | grep -v 'no job control in this shell' | tr -d '\r')"
+if [ "$linux_silence_output" != "PROBE_START" ]; then
+  fail "Startup is not silent! Unsolicited output detected: $linux_silence_output"
+fi
+pass "Login shell startup is completely silent"
 
 
 idempotency_output="$(run_idempotency_probe "$windows_home" MINGW64_NT-10.0 '')"
@@ -337,8 +389,13 @@ if [ "$(printf '%s' "$idempotency_output" | grep -o "$windows_home/bin:" | wc -l
 fi
 pass "Environment layer is idempotent"
 
+nonlogin_inheritance_output="$(run_nonlogin_inheritance_probe "$linux_home")"
+assert_line_equals "$nonlogin_inheritance_output" "ENV=/inherited/env" "Non-login shell failed to inherit ENV"
+assert_line_equals "$nonlogin_inheritance_output" "PATH=/inherited/path:/usr/bin:/bin" "Non-login shell reconstructed PATH instead of inheriting"
+pass "Non-login shells inherit parent environment without rebuilding"
 
-if grep -U $'\r' profile bash/* sh/* real/.* 2>/dev/null; then
+
+if grep -U $'\r' "$repo_root/profile" "$repo_root"/bash/* "$repo_root"/sh/* "$repo_root"/real/.* 2>/dev/null; then
   fail "CR bytes found in repository-controlled startup files! Files must be LF only."
 fi
 pass "All repository-controlled startup files are LF only"
