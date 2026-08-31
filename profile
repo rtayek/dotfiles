@@ -1,8 +1,18 @@
-if [ -f "$HOME/dotfiles/shell/environment" ]; then
-  . "$HOME/dotfiles/shell/environment"
-elif [ -f "/home/${USER:-ray}/dotfiles/shell/environment" ]; then
-  . "/home/${USER:-ray}/dotfiles/shell/environment"
-fi
+# Portable environment layer
+
+case ":$PATH:" in
+  *":$HOME/bin:"*) ;;
+  *) [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH" ;;
+esac
+
+case ":$PATH:" in
+  *":$HOME/dotfiles/bin:"*) ;;
+  *) [ -d "$HOME/dotfiles/bin" ] && PATH="$HOME/dotfiles/bin:$PATH" ;;
+esac
+
+export PATH
+export ENV="$HOME/dotfiles/sh/shrc"
+export qv="//sdcard/Download/videos"
 
 # Only for interactive sh, not bash
 [ -z "${BASH_VERSION-}" ] || return 0

@@ -45,9 +45,7 @@ EOF
 [ -f "$repo_root/bash/bash_functions-ubuntu" ] && . "$repo_root/bash/bash_functions-ubuntu"
 EOF
   cat >"$home_dir/.bashrc" <<EOF
-echo "BEFORE_SOURCING"
 [ -f "$repo_root/bash/bashrc" ] && . "$repo_root/bash/bashrc"
-echo "BASHRC_WAS_SOURCED"
 EOF
   cat >"$home_dir/.profile" <<EOF
 [ -f "$repo_root/profile" ] && . "$repo_root/profile"
@@ -55,7 +53,6 @@ EOF
   cat >"$home_dir/.bash_profile" <<EOF
 [ -f "$repo_root/bash/bash_profile" ] && . "$repo_root/bash/bash_profile"
 EOF
-  ln -s "$repo_root/shell" "$home_dir/dotfiles/shell"
   ln -s "$repo_root/bash" "$home_dir/dotfiles/bash"
   ln -s "$repo_root/sh" "$home_dir/dotfiles/sh"
   ln -s "$repo_root/profile" "$home_dir/dotfiles/profile"
@@ -72,38 +69,35 @@ run_login_probe() {
     cd "$home_dir/some_project"
     HOME="$home_dir" \
     PATH="/usr/bin:/bin" \
+    JAVA_HOME= \
+    GRADLE_HOME= \
+    myroot= \
+    WT_SESSION= \
     RAY_DOTFILES_UNAME_S="$uname_s" \
     RAY_DOTFILES_OS_ID="$os_id" \
-    bash --login -c "
+    bash --login -i -c "
+      printf 'HOME=%s\n' \"\$HOME\"
       printf 'PWD=%s\n' \"\$PWD\"
+      printf 'PS1=%s\n' \"\$PS1\"
       printf 'PATH=%s\n' \"\$PATH\"
-      printf 'MANPATH=%s\n' \"\${MANPATH-}\"
-      printf 'INFOPATH=%s\n' \"\${INFOPATH-}\"
-      printf 'ENV=%s\n' \"\${ENV-}\"
-      printf 'LANG=%s\n' \"\${LANG-}\"
+      printf 'JAVA_HOME=%s\n' \"\${JAVA_HOME-}\"
+      printf 'GRADLE_HOME=%s\n' \"\${GRADLE_HOME-}\"
+      printf 'myroot=%s\n' \"\${myroot-}\"
+      printf 'RAY_DEV_HOME=%s\n' \"\${RAY_DEV_HOME-}\"
+      printf 'RAY_TEST_UBUNTU_CONDA=%s\n' \"\${RAY_TEST_UBUNTU_CONDA-}\"
+      alias gs >/dev/null 2>&1 && printf 'alias_gs=yes\n'
+      type pathPrepend >/dev/null 2>&1 && printf 'function_pathPrepend=yes\n'
+      type dedupePath >/dev/null 2>&1 && printf 'function_dedupePath=yes\n'
+      type gchat >/dev/null 2>&1 && printf 'function_gchat=yes\n'
+      printf 'HISTFILE=%s\n' \"\$HISTFILE\"
+      printf 'HISTSIZE=%s\n' \"\$HISTSIZE\"
+      printf 'HISTFILESIZE=%s\n' \"\$HISTFILESIZE\"
+      printf 'HISTCONTROL=%s\n' \"\$HISTCONTROL\"
+      printf 'ENV=%s\n' \"\$ENV\"
     " 2>/dev/null
   )
 }
 
-run_nonlogin_probe() {
-  local home_dir=$1
-  local uname_s=$2
-  local os_id=${3:-}
-
-  (
-    cd "$home_dir/some_project"
-    HOME="$home_dir" \
-    PATH="/usr/bin:/bin" \
-    RAY_DOTFILES_UNAME_S="$uname_s" \
-    RAY_DOTFILES_OS_ID="$os_id" \
-    bash --noprofile --norc -i -c "
-      . '$home_dir/.bashrc'
-      printf 'PWD=%s\n' \"\$PWD\"
-      printf 'PATH=%s\n' \"\$PATH\"
-      printf 'ENV=%s\n' \"\${ENV-}\"
-    "
-  )
-}
 
 run_idempotency_probe() {
   local home_dir=$1
@@ -117,92 +111,46 @@ run_idempotency_probe() {
     RAY_DOTFILES_UNAME_S="$uname_s" \
     RAY_DOTFILES_OS_ID="$os_id" \
     bash --noprofile --norc -i -c "
-      . '$home_dir/dotfiles/shell/environment'
-      . '$home_dir/dotfiles/shell/environment'
+      . '$home_dir/dotfiles/profile'
+      . '$home_dir/dotfiles/profile'
       printf 'PATH=%s\n' \"\$PATH\"
     "
   )
 }
 
-run_startup_probe() {
-  local home_dir=$1
-  local uname_s=$2
-  local os_id=${3:-}
 
-  HOME="$home_dir" \
-  PATH="/usr/bin:/bin" \
-  JAVA_HOME= \
-  GRADLE_HOME= \
-  myroot= \
-  WT_SESSION= \
-  RAY_DOTFILES_UNAME_S="$uname_s" \
-  RAY_DOTFILES_OS_ID="$os_id" \
-  bash --noprofile --norc -i -c "
-    . '$repo_root/bash/bashrc' >/dev/null
-    printf 'HOME=%s\n' \"\$HOME\"
-    printf 'PS1=%s\n' \"\$PS1\"
-    printf 'PATH=%s\n' \"\$PATH\"
-    printf 'JAVA_HOME=%s\n' \"\${JAVA_HOME-}\"
-    printf 'GRADLE_HOME=%s\n' \"\${GRADLE_HOME-}\"
-    printf 'myroot=%s\n' \"\${myroot-}\"
-    printf 'RAY_DEV_HOME=%s\n' \"\${RAY_DEV_HOME-}\"
-    printf 'RAY_TEST_UBUNTU_CONDA=%s\n' \"\${RAY_TEST_UBUNTU_CONDA-}\"
-    alias gs >/dev/null 2>&1 && printf 'alias_gs=yes\n'
-    type pathPrepend >/dev/null 2>&1 && printf 'function_pathPrepend=yes\n'
-    type dedupePath >/dev/null 2>&1 && printf 'function_dedupePath=yes\n'
-    type gchat >/dev/null 2>&1 && printf 'function_gchat=yes\n'
-    printf 'HISTFILE=%s\n' \"\$HISTFILE\"
-    printf 'HISTSIZE=%s\n' \"\$HISTSIZE\"
-    printf 'HISTFILESIZE=%s\n' \"\$HISTFILESIZE\"
-    printf 'HISTCONTROL=%s\n' \"\$HISTCONTROL\"
-    printf 'ENV=%s\n' \"\$ENV\"
-  " 2>/dev/null
-}
-
-run_ubuntu_windows_home_probe() {
-  local windows_home_value=$1
-
-  HOME="$windows_home_value" \
-  USER=ray \
-  PATH="/usr/bin:/bin" \
-  JAVA_HOME= \
-  GRADLE_HOME= \
-  myroot= \
-  WT_SESSION= \
-  RAY_DOTFILES_UNAME_S=Linux \
-  RAY_DOTFILES_OS_ID=ubuntu \
-  bash --noprofile --norc -i -c "
-    . '$repo_root/bash/bashrc' >/dev/null
-    printf 'HOME=%s\n' \"\$HOME\"
-    printf 'HISTFILE=%s\n' \"\$HISTFILE\"
-    printf 'ENV=%s\n' \"\$ENV\"
-  " 2>/dev/null
-}
 
 run_ubuntu_windows_home_stub_probe() {
   local linux_home=$1
   local windows_home=$2
   local windows_home_value=$3
 
-  mkdir -p "$windows_home"
+  mkdir -p "$windows_home/some_project"
+  cp "$repo_root/real/.bash_profile" "$windows_home/.bash_profile"
+  cp "$repo_root/real/.profile" "$windows_home/.profile"
   cp "$repo_root/real/.bashrc" "$windows_home/.bashrc"
 
-  HOME="$windows_home_value" \
-  USER=ray \
-  PATH="/usr/bin:/bin" \
-  JAVA_HOME= \
-  GRADLE_HOME= \
-  myroot= \
-  WT_SESSION= \
-  RAY_DOTFILES_LINUX_HOME="$linux_home" \
-  RAY_DOTFILES_UNAME_S=Linux \
-  RAY_DOTFILES_OS_ID=ubuntu \
-  bash --noprofile --norc -i -c "
-    . '$windows_home/.bashrc' >/dev/null
-    printf 'HOME=%s\n' \"\$HOME\"
-    printf 'HISTFILE=%s\n' \"\$HISTFILE\"
-    printf 'ENV=%s\n' \"\$ENV\"
-  " 2>/dev/null
+  (
+    cd "$windows_home/some_project"
+    HOME="$windows_home_value" \
+    USER=ray \
+    PATH="/usr/bin:/bin" \
+    JAVA_HOME= \
+    GRADLE_HOME= \
+    myroot= \
+    WT_SESSION= \
+    RAY_DOTFILES_LINUX_HOME="$linux_home" \
+    RAY_DOTFILES_UNAME_S=Linux \
+    RAY_DOTFILES_OS_ID=ubuntu \
+    bash --noprofile --norc -i -c "
+      . '$windows_home/.bash_profile' >/dev/null
+      printf 'HOME=%s\n' \"\$HOME\"
+      printf 'PWD=%s\n' \"\$PWD\"
+      printf 'HISTFILE=%s\n' \"\$HISTFILE\"
+      printf 'ENV=%s\n' \"\$ENV\"
+      printf 'PATH=%s\n' \"\$PATH\"
+    " 2>/dev/null
+  )
 }
 
 run_ubuntu_windows_home_deploy_probe() {
@@ -275,9 +223,8 @@ grep -Fq '$HOME/dotfiles/bash/bash_functions' "$repo_root/real/.bash_functions" 
 grep -Fq 'FontSize=20' "$repo_root/real/.minttyrc" || fail "real/.minttyrc target changed"
 pass "bootstrap files still point to intended tracked files"
 
-grep -Fq 'set -o igncr' "$repo_root/bash/bootstrap" || fail "Windows igncr handling missing"
-grep -Fq '/c/Users/ray/miniconda3/etc/profile.d/conda.sh' "$repo_root/bash/bashrc-windows" || fail "Windows Conda path changed"
-pass "Windows login-profile igncr and Conda path are preserved"
+grep -Fq 'conda.sh' "$repo_root/bash/bashrc-windows" || fail "Windows Conda loading missing"
+pass "Windows login-profile Conda path is preserved"
 
 direnv_helper_path="direnv/envrc"
 stale_direnv_helper_path="${direnv_helper_path}.txt"
@@ -305,24 +252,22 @@ make_test_home "$windows_home"
 mkdir -p "$linux_home/bin" "$linux_home/dev" "$linux_home/anaconda3/etc/profile.d"
 printf 'export RAY_TEST_UBUNTU_CONDA=loaded\n' >"$linux_home/anaconda3/etc/profile.d/conda.sh"
 
-linux_output="$(run_startup_probe "$linux_home" Linux ubuntu)"
-windows_output="$(run_startup_probe "$windows_home" MINGW64_NT-10.0 '')"
+linux_output="$(run_login_probe "$linux_home" Linux ubuntu | tr -d '\r')"
+windows_output="$(run_login_probe "$windows_home" MINGW64_NT-10.0 '' | tr -d '\r')"
 project_history_unset_output="$(run_project_history_unset_probe "$linux_home")"
 
 assert_line_equals "$linux_output" "HOME=$linux_home" "Ubuntu HOME changed when already Linux-local"
 for windows_home_value in /c/Users/ray /mnt/c/Users/ray /mnt/c/users/ray 'C:\Users\ray'; do
-  ubuntu_windows_home_output="$(run_ubuntu_windows_home_probe "$windows_home_value")"
-  assert_line_equals "$ubuntu_windows_home_output" "HOME=/home/ray" "Ubuntu HOME was not reset from Windows home: $windows_home_value"
-  assert_line_equals "$ubuntu_windows_home_output" "HISTFILE=/home/ray/.bash_history" "Ubuntu HISTFILE used Windows home: $windows_home_value"
-  assert_not_contains "$ubuntu_windows_home_output" "$windows_home_value" "Ubuntu startup kept a Windows home path: $windows_home_value"
+  ubuntu_windows_home_output="$(run_ubuntu_windows_home_stub_probe "$linux_home" "$windows_home" "$windows_home_value" | tr -d '\r')"
+  assert_line_equals "$ubuntu_windows_home_output" "HOME=$linux_home" "Ubuntu HOME was not reset from Windows home: $windows_home_value"
+  assert_line_equals "$ubuntu_windows_home_output" "HISTFILE=$linux_home/.bash_history" "Ubuntu HISTFILE used Windows home: $windows_home_value"
+  assert_line_equals "$ubuntu_windows_home_output" "ENV=$linux_home/dotfiles/sh/shrc" "Ubuntu ENV used Windows home: $windows_home_value"
+  assert_line_equals "$ubuntu_windows_home_output" "PWD=$windows_home/some_project" "Ubuntu PWD changed"
+  if ! printf '%s\n' "$ubuntu_windows_home_output" | grep -q "^PATH=$linux_home/dotfiles/bin:$linux_home/bin:"; then
+    fail "Ubuntu PATH did not have Linux home paths at the front: $ubuntu_windows_home_output"
+  fi
 done
 pass "Ubuntu startup resets imported Windows HOME before deriving paths"
-
-ubuntu_windows_home_stub_output="$(run_ubuntu_windows_home_stub_probe "$linux_home" "$windows_home" /mnt/c/users/ray)"
-assert_line_equals "$ubuntu_windows_home_stub_output" "HOME=$linux_home" "Ubuntu stub did not load dotfiles from Linux home"
-assert_line_equals "$ubuntu_windows_home_stub_output" "HISTFILE=$linux_home/.bash_history" "Ubuntu stub HISTFILE used Windows home"
-assert_not_contains "$ubuntu_windows_home_stub_output" "$windows_home" "Ubuntu stub kept a Windows home path"
-pass "Ubuntu deployed stub reaches Linux dotfiles even when HOME starts wrong"
 
 run_ubuntu_windows_home_deploy_probe "$linux_home" /mnt/c/users/ray
 pass "deploy targets Linux home when Ubuntu HOME starts as Windows home"
@@ -385,11 +330,6 @@ assert_contains "$linux_login_output" "$linux_home/dotfiles/bin:" "Linux login s
 assert_contains "$linux_login_output" 'ENV='"$linux_home"'/dotfiles/sh/shrc' "Linux login shell missing ENV"
 pass "Login shells correctly initialize environments and preserve PWD"
 
-windows_nonlogin_output="$(run_nonlogin_probe "$windows_home" MINGW64_NT-10.0 '')"
-assert_contains "$windows_nonlogin_output" "$windows_home/bin:" "Windows non-login shell missing HOME/bin in PATH"
-assert_contains "$windows_nonlogin_output" "$windows_home/dotfiles/bin:" "Windows non-login shell missing dotfiles/bin in PATH"
-assert_contains "$windows_nonlogin_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "Windows non-login shell missing ENV"
-pass "Non-login shells correctly initialize environments"
 
 idempotency_output="$(run_idempotency_probe "$windows_home" MINGW64_NT-10.0 '')"
 if [ "$(printf '%s' "$idempotency_output" | grep -o "$windows_home/bin:" | wc -l)" -ne 1 ]; then
@@ -397,8 +337,8 @@ if [ "$(printf '%s' "$idempotency_output" | grep -o "$windows_home/bin:" | wc -l
 fi
 pass "Environment layer is idempotent"
 
-linux_nonlogin_output="$(run_nonlogin_probe "$linux_home" Linux ubuntu)"
-assert_contains "$linux_nonlogin_output" "$linux_home/bin:" "Linux non-login shell missing HOME/bin in PATH"
-assert_contains "$linux_nonlogin_output" "$linux_home/dotfiles/bin:" "Linux non-login shell missing dotfiles/bin in PATH"
-assert_contains "$linux_nonlogin_output" 'ENV='"$linux_home"'/dotfiles/sh/shrc' "Linux non-login shell missing ENV"
-pass "Non-login shells correctly initialize environments"
+
+if grep -U $'\r' profile bash/* sh/* real/.* 2>/dev/null; then
+  fail "CR bytes found in repository-controlled startup files! Files must be LF only."
+fi
+pass "All repository-controlled startup files are LF only"

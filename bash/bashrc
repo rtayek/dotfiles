@@ -31,9 +31,6 @@ ray_linux_distribution() {
   printf '%s\n' linux
 }
 
-[ -f "$__ray_bash_dir/bootstrap" ] && . "$__ray_bash_dir/bootstrap"
-[ -f "$__ray_bash_dir/../shell/environment" ] && . "$__ray_bash_dir/../shell/environment"
-
 __ray_shell_platform="$(ray_shell_platform)"
 __ray_linux_distribution=
 

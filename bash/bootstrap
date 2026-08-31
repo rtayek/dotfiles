@@ -1,6 +1,45 @@
 # Bash early bootstrap: fixes critical environment issues before HOME is used.
 
-# 1. Protect against CRLF in Windows Git Bash
+# 1. Repair WSL HOME if it imported a Windows path
+ray_windows_home_path() {
+  case "$1" in
+    /mnt/[A-Za-z]/[Uu]sers/*|/[A-Za-z]/[Uu]sers/*|[A-Za-z]:/[Uu]sers/*|[A-Za-z]:\\[Uu]sers\\*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+ray_linux_login_home() {
+  local login_user login_entry login_home
+  login_user="${USER:-$(id -un 2>/dev/null || printf '')}"
+  [ -n "$login_user" ] || return 1
+  if command -v getent >/dev/null 2>&1; then
+    login_entry="$(getent passwd "$login_user" 2>/dev/null || printf '')"
+    login_home="$(printf '%s\n' "$login_entry" | awk -F: 'NF >= 6 { print $6; exit }')"
+    if [ -n "$login_home" ] && ! ray_windows_home_path "$login_home"; then
+      printf '%s\n' "$login_home"
+      return 0
+    fi
+  fi
+  printf '/home/%s\n' "$login_user"
+}
+
+ray_fix_ubuntu_home() {
+  local login_home
+  ray_windows_home_path "${HOME-}" || return 0
+  login_home="${RAY_DOTFILES_LINUX_HOME:-}"
+  [ -n "$login_home" ] || login_home="$(ray_linux_login_home)" || return 0
+  [ -n "$login_home" ] || return 0
+  export HOME="$login_home"
+}
+
 case "${RAY_DOTFILES_UNAME_S:-$(uname -s 2>/dev/null || printf unknown)}" in
-  MINGW*|MSYS*) set -o igncr 2>/dev/null || true ;;
+  Linux*)
+    if [ "${RAY_DOTFILES_OS_ID-}" = ubuntu ]; then
+      ray_fix_ubuntu_home
+    elif [ -r /etc/os-release ]; then
+      if ( . /etc/os-release; printf '%s\n' "${ID:-linux}" ) | grep -q ubuntu; then
+        ray_fix_ubuntu_home
+      fi
+    fi
+    ;;
 esac

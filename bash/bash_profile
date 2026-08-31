@@ -1,3 +1,4 @@
-[ -f "$HOME/dotfiles/bash/bootstrap" ] && . "$HOME/dotfiles/bash/bootstrap"
+__ray_bash_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+[ -f "$__ray_bash_dir/bootstrap" ] && . "$__ray_bash_dir/bootstrap"
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
