@@ -2,7 +2,6 @@
 export -n PS1 2>/dev/null || true
 unset PROMPT_COMMAND 2>/dev/null || true
 
-export ENV="$HOME/dotfiles/sh/shrc"
 
 shopt -s histappend
 
@@ -12,7 +11,6 @@ export HISTFILESIZE=20000
 export HISTCONTROL=ignoredups:erasedups
 export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls'
 
-export qv="//sdcard/Download/videos"
 
 if [ -f "${HOME}/.bash_aliases" ]; then
   . "${HOME}/.bash_aliases"
@@ -26,8 +24,6 @@ elif [ -f "$__ray_bash_dir/bash_functions" ]; then
   . "$__ray_bash_dir/bash_functions"
 fi
 
-[ -d "${HOME}/bin" ] && pathPrepend "${HOME}/bin"
-[ -d "${HOME}/dotfiles/bin" ] && pathPrepend "${HOME}/dotfiles/bin"
 
 ray_update_terminal_title() {
   [ -n "${WT_SESSION-}" ] || return 0

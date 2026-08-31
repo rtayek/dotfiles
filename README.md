@@ -17,9 +17,15 @@ deploys `settings.json` to Windows Terminal.
 
     Bash login
       -> ~/.bash_profile          (stub)
-        -> bash/bash_profile      (real: platform login setup)
+        -> bash/bash_profile      (real: thin Bash dispatcher)
+          -> bash/bootstrap       (WSL HOME repair)
+          -> ~/.profile           (stub)
+            -> profile            (POSIX login entry point)
+              -> shell/environment (idempotent PATH, ENV policy)
           -> ~/.bashrc            (stub)
-            -> bash/bashrc        (real: platform dispatcher)
+            -> bash/bashrc        (real: interactive entry point)
+              -> bash/bootstrap       (already run by login, but protects non-login)
+              -> shell/environment (ensures non-login Bash gets environment)
               -> bash/bashrc-common
               -> ~/.bash_aliases  (stub)
                 -> bash/bash_aliases
@@ -28,11 +34,14 @@ deploys `settings.json` to Windows Terminal.
               -> bash/bashrc-windows or bash/bashrc-ubuntu
                 -> bash/bash_functions-windows or bash/bash_functions-ubuntu
               -> bash/bashrc-project-history
-              -> ENV=sh/shrc      (prompt for plain sh sessions)
 
     Plain sh login
       -> ~/.profile               (stub)
-        -> profile                (real: sh prompt)
+        -> profile                (POSIX login entry point)
+          -> shell/environment    (idempotent PATH, ENV policy)
+
+    Interactive sh
+      -> ENV=sh/shrc              (real: plain sh behavior)
 
     Any git command
       -> ~/.gitconfig             (generated include stub)
@@ -54,7 +63,8 @@ deploys `settings.json` to Windows Terminal.
 | `direnv/envrc`          | Shared direnv helpers, sourced by project `.envrc` files |
 | `docs/`                 | Durable human-facing project notes |
 | `.llm/`                 | Agent working context, handoffs, and reusable LLM material |
-| `profile`               | Real sh profile |
+| `shell/`                | Shell-independent environment logic |
+| `profile`               | POSIX login entry point |
 | `deploy.sh`             | Deploys home stubs, Git config includes, and Windows Terminal settings |
 
 ## real/ contents
