@@ -1,0 +1,7 @@
+*.sh text eol=lf
+profile text eol=lf
+bash/* text eol=lf
+sh/* text eol=lf
+real/.bash_profile text eol=lf
+real/.bashrc text eol=lf
+real/.profile text eol=lf
