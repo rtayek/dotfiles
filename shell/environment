@@ -1,0 +1,15 @@
+# Portable environment layer
+
+case ":$PATH:" in
+  *":$HOME/bin:"*) ;;
+  *) [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH" ;;
+esac
+
+case ":$PATH:" in
+  *":$HOME/dotfiles/bin:"*) ;;
+  *) [ -d "$HOME/dotfiles/bin" ] && PATH="$HOME/dotfiles/bin:$PATH" ;;
+esac
+
+export PATH
+export ENV="$HOME/dotfiles/sh/shrc"
+export qv="//sdcard/Download/videos"

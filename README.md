@@ -18,10 +18,14 @@ deploys `settings.json` to Windows Terminal.
     Bash login
       -> ~/.bash_profile          (stub)
         -> bash/bash_profile      (real: thin Bash dispatcher)
+          -> bash/bootstrap       (early igncr, WSL HOME repair)
           -> ~/.profile           (stub)
-            -> profile            (real: portable login environment, PATH, ENV)
+            -> profile            (POSIX login entry point)
+              -> shell/environment (idempotent PATH, ENV policy)
           -> ~/.bashrc            (stub)
-            -> bash/bashrc        (real: platform dispatcher)
+            -> bash/bashrc        (real: interactive entry point)
+              -> bash/bootstrap       (already run by login, but protects non-login)
+              -> shell/environment (ensures non-login Bash gets environment)
               -> bash/bashrc-common
               -> ~/.bash_aliases  (stub)
                 -> bash/bash_aliases
@@ -33,7 +37,8 @@ deploys `settings.json` to Windows Terminal.
 
     Plain sh login
       -> ~/.profile               (stub)
-        -> profile                (real: portable login environment, PATH, ENV)
+        -> profile                (POSIX login entry point)
+          -> shell/environment    (idempotent PATH, ENV policy)
 
     Interactive sh
       -> ENV=sh/shrc              (real: plain sh behavior)
@@ -58,7 +63,8 @@ deploys `settings.json` to Windows Terminal.
 | `direnv/envrc`          | Shared direnv helpers, sourced by project `.envrc` files |
 | `docs/`                 | Durable human-facing project notes |
 | `.llm/`                 | Agent working context, handoffs, and reusable LLM material |
-| `profile`               | Portable login environment (PATH, ENV, locale) |
+| `shell/`                | Shell-independent environment logic |
+| `profile`               | POSIX login entry point |
 | `deploy.sh`             | Deploys home stubs, Git config includes, and Windows Terminal settings |
 
 ## real/ contents

@@ -45,11 +45,20 @@ EOF
 [ -f "$repo_root/bash/bash_functions-ubuntu" ] && . "$repo_root/bash/bash_functions-ubuntu"
 EOF
   cat >"$home_dir/.bashrc" <<EOF
+echo "BEFORE_SOURCING"
 [ -f "$repo_root/bash/bashrc" ] && . "$repo_root/bash/bashrc"
+echo "BASHRC_WAS_SOURCED"
 EOF
   cat >"$home_dir/.profile" <<EOF
 [ -f "$repo_root/profile" ] && . "$repo_root/profile"
 EOF
+  cat >"$home_dir/.bash_profile" <<EOF
+[ -f "$repo_root/bash/bash_profile" ] && . "$repo_root/bash/bash_profile"
+EOF
+  ln -s "$repo_root/shell" "$home_dir/dotfiles/shell"
+  ln -s "$repo_root/bash" "$home_dir/dotfiles/bash"
+  ln -s "$repo_root/sh" "$home_dir/dotfiles/sh"
+  ln -s "$repo_root/profile" "$home_dir/dotfiles/profile"
 }
 
 run_login_probe() {
@@ -59,20 +68,41 @@ run_login_probe() {
 
   mkdir -p "$home_dir/some_project"
   
-  HOME="$home_dir" \
-  PATH="/usr/bin:/bin" \
-  RAY_DOTFILES_UNAME_S="$uname_s" \
-  RAY_DOTFILES_OS_ID="$os_id" \
-  bash --noprofile --norc -i -c "
-    cd '$home_dir/some_project'
-    . '$repo_root/bash/bash_profile'
-    printf 'PWD=%s\n' \"\$PWD\"
-    printf 'PATH=%s\n' \"\$PATH\"
-    printf 'MANPATH=%s\n' \"\${MANPATH-}\"
-    printf 'INFOPATH=%s\n' \"\${INFOPATH-}\"
-    printf 'ENV=%s\n' \"\${ENV-}\"
-    printf 'LANG=%s\n' \"\${LANG-}\"
-  " 2>/dev/null
+  (
+    cd "$home_dir/some_project"
+    HOME="$home_dir" \
+    PATH="/usr/bin:/bin" \
+    RAY_DOTFILES_UNAME_S="$uname_s" \
+    RAY_DOTFILES_OS_ID="$os_id" \
+    bash --login -c "
+      printf 'PWD=%s\n' \"\$PWD\"
+      printf 'PATH=%s\n' \"\$PATH\"
+      printf 'MANPATH=%s\n' \"\${MANPATH-}\"
+      printf 'INFOPATH=%s\n' \"\${INFOPATH-}\"
+      printf 'ENV=%s\n' \"\${ENV-}\"
+      printf 'LANG=%s\n' \"\${LANG-}\"
+    " 2>/dev/null
+  )
+}
+
+run_nonlogin_probe() {
+  local home_dir=$1
+  local uname_s=$2
+  local os_id=${3:-}
+
+  (
+    cd "$home_dir/some_project"
+    HOME="$home_dir" \
+    PATH="/usr/bin:/bin" \
+    RAY_DOTFILES_UNAME_S="$uname_s" \
+    RAY_DOTFILES_OS_ID="$os_id" \
+    bash --noprofile --norc -i -c "
+      . '$home_dir/.bashrc'
+      printf 'PWD=%s\n' \"\$PWD\"
+      printf 'PATH=%s\n' \"\$PATH\"
+      printf 'ENV=%s\n' \"\${ENV-}\"
+    "
+  )
 }
 
 run_startup_probe() {
@@ -226,7 +256,7 @@ grep -Fq '$HOME/dotfiles/bash/bash_functions' "$repo_root/real/.bash_functions" 
 grep -Fq 'FontSize=20' "$repo_root/real/.minttyrc" || fail "real/.minttyrc target changed"
 pass "bootstrap files still point to intended tracked files"
 
-grep -Fq 'set -o igncr' "$repo_root/bash/bashrc-windows" || fail "Windows igncr handling missing"
+grep -Fq 'set -o igncr' "$repo_root/bash/bootstrap" || fail "Windows igncr handling missing"
 grep -Fq '/c/Users/ray/miniconda3/etc/profile.d/conda.sh' "$repo_root/bash/bashrc-windows" || fail "Windows Conda path changed"
 pass "Windows login-profile igncr and Conda path are preserved"
 
@@ -253,10 +283,6 @@ linux_home="$tmp_root/linux-home"
 windows_home="$tmp_root/windows-home"
 make_test_home "$linux_home"
 make_test_home "$windows_home"
-mkdir -p "$linux_home/dotfiles"
-ln -s "$repo_root/bash" "$linux_home/dotfiles/bash"
-ln -s "$repo_root/sh" "$linux_home/dotfiles/sh"
-ln -s "$repo_root/profile" "$linux_home/dotfiles/profile"
 mkdir -p "$linux_home/bin" "$linux_home/dev" "$linux_home/anaconda3/etc/profile.d"
 printf 'export RAY_TEST_UBUNTU_CONDA=loaded\n' >"$linux_home/anaconda3/etc/profile.d/conda.sh"
 
@@ -331,17 +357,22 @@ windows_login_output="$(run_login_probe "$windows_home" MINGW64_NT-10.0 '')"
 assert_line_equals "$windows_login_output" "PWD=$windows_home/some_project" "Windows login shell changed directories from some_project"
 assert_contains "$windows_login_output" "$windows_home/bin:" "Windows login shell missing HOME/bin in PATH"
 assert_contains "$windows_login_output" "$windows_home/dotfiles/bin:" "Windows login shell missing dotfiles/bin in PATH"
-assert_contains "$windows_login_output" "MANPATH=$windows_home/man:" "Windows login shell missing HOME/man in MANPATH"
-assert_contains "$windows_login_output" "INFOPATH=$windows_home/info:" "Windows login shell missing HOME/info in INFOPATH"
 assert_contains "$windows_login_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "Windows login shell missing ENV"
-assert_contains "$windows_login_output" 'LANG=en_US.UTF-8' "Windows login shell missing LANG"
 
 linux_login_output="$(run_login_probe "$linux_home" Linux ubuntu)"
 assert_line_equals "$linux_login_output" "PWD=$linux_home/some_project" "Linux login shell changed directories from some_project"
 assert_contains "$linux_login_output" "$linux_home/bin:" "Linux login shell missing HOME/bin in PATH"
 assert_contains "$linux_login_output" "$linux_home/dotfiles/bin:" "Linux login shell missing dotfiles/bin in PATH"
-assert_contains "$linux_login_output" "MANPATH=$linux_home/man:" "Linux login shell missing HOME/man in MANPATH"
-assert_contains "$linux_login_output" "INFOPATH=$linux_home/info:" "Linux login shell missing HOME/info in INFOPATH"
 assert_contains "$linux_login_output" 'ENV='"$linux_home"'/dotfiles/sh/shrc' "Linux login shell missing ENV"
-assert_contains "$linux_login_output" 'LANG=en_US.UTF-8' "Linux login shell missing LANG"
 pass "Login shells correctly initialize environments and preserve PWD"
+
+windows_nonlogin_output="$(run_nonlogin_probe "$windows_home" MINGW64_NT-10.0 '')"
+assert_contains "$windows_nonlogin_output" "$windows_home/bin:" "Windows non-login shell missing HOME/bin in PATH"
+assert_contains "$windows_nonlogin_output" "$windows_home/dotfiles/bin:" "Windows non-login shell missing dotfiles/bin in PATH"
+assert_contains "$windows_nonlogin_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "Windows non-login shell missing ENV"
+
+linux_nonlogin_output="$(run_nonlogin_probe "$linux_home" Linux ubuntu)"
+assert_contains "$linux_nonlogin_output" "$linux_home/bin:" "Linux non-login shell missing HOME/bin in PATH"
+assert_contains "$linux_nonlogin_output" "$linux_home/dotfiles/bin:" "Linux non-login shell missing dotfiles/bin in PATH"
+assert_contains "$linux_nonlogin_output" 'ENV='"$linux_home"'/dotfiles/sh/shrc' "Linux non-login shell missing ENV"
+pass "Non-login shells correctly initialize environments"

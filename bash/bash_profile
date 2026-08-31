@@ -1,2 +1,3 @@
+[ -f "$HOME/dotfiles/bash/bootstrap" ] && . "$HOME/dotfiles/bash/bootstrap"
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
