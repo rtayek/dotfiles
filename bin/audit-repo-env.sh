@@ -20,8 +20,12 @@ tracked() {
     git ls-files --error-unmatch -- "$1" >/dev/null 2>&1
 }
 
-ignored_by() {
+ignore_rule() {
     git check-ignore -v --no-index -- "$1" 2>/dev/null || true
+}
+
+is_ignored() {
+    git check-ignore -q --no-index -- "$1" 2>/dev/null
 }
 
 section() {
@@ -43,6 +47,13 @@ show_config_key() {
     else
         printf '  (not configured)\n'
     fi
+}
+
+repo_find() {
+    find . \
+        -path './.git' -prune -o \
+        -path './.claude/worktrees' -prune -o \
+        "$@"
 }
 
 section '.envrc / direnv'
@@ -83,7 +94,7 @@ else
     printf '  If this project should have separate Bash history, it needs a small tracked .envrc.\n'
 fi
 
-nested_envrc=$(find . -path './.git' -prune -o -type f -name .envrc ! -path './.envrc' -print)
+nested_envrc=$(repo_find -type f -name .envrc ! -path './.envrc' -print)
 if [ -n "$nested_envrc" ]; then
     printf 'Nested .envrc files found:\n%s\n' "$nested_envrc" | sed '2,$s/^/  /'
 else
@@ -109,9 +120,8 @@ if [ -d .direnv ]; then
     if git ls-files -- .direnv | grep -q .; then
         printf '  WARNING: .direnv contains tracked files\n'
     fi
-    ignored=$(ignored_by .direnv/)
-    if [ -n "$ignored" ]; then
-        printf '  ignore rule: %s\n' "$ignored"
+    if is_ignored .direnv/; then
+        printf '  ignore rule: %s\n' "$(ignore_rule .direnv/)"
     else
         printf '  WARNING: .direnv/ is not ignored\n'
     fi
@@ -121,7 +131,7 @@ fi
 
 section 'Bash history files'
 
-histories=$(find . -path './.git' -prune -o -type f -name .bash_history -print)
+histories=$(repo_find -type f -name .bash_history -print)
 if [ -z "$histories" ]; then
     printf 'No .bash_history files found in the repository.\n'
 else
@@ -136,11 +146,15 @@ else
         if tracked "$rel"; then
             printf '  WARNING: tracked by Git\n'
         fi
-        why=$(ignored_by "$rel")
-        if [ -n "$why" ]; then
-            printf '  ignored by: %s\n' "$why"
+        if is_ignored "$rel"; then
+            printf '  ignored by: %s\n' "$(ignore_rule "$rel")"
         else
-            printf '  WARNING: not ignored\n'
+            rule=$(ignore_rule "$rel")
+            if [ -n "$rule" ]; then
+                printf '  visible to Git because of: %s\n' "$rule"
+            else
+                printf '  WARNING: not ignored\n'
+            fi
         fi
     done
 fi
@@ -162,7 +176,7 @@ else
     fi
 fi
 
-ignore_files=$(find . -path './.git' -prune -o -type f -name .gitignore -print)
+ignore_files=$(repo_find -type f -name .gitignore -print)
 if [ -z "$ignore_files" ]; then
     printf 'Repository .gitignore files: none\n'
 else
@@ -195,7 +209,7 @@ if [ -n "${global_file:-}" ] && [ -f .gitignore ]; then
     fi
 fi
 
-negations=$(find . -path './.git' -prune -o -type f -name .gitignore -exec grep -Hn '^[[:space:]]*!' {} \; 2>/dev/null || true)
+negations=$(repo_find -type f -name .gitignore -exec grep -Hn '^[[:space:]]*!' {} \; 2>/dev/null || true)
 if [ -n "$negations" ]; then
     printf '\nNegation rules found (worth reviewing because they can override broader ignores):\n'
     printf '%s\n' "$negations" | sed 's/^/  /'
@@ -203,11 +217,15 @@ fi
 
 printf '\nPolicy probes (actual Git ignore behavior):\n'
 for p in .bash_history subdir/.bash_history .env .project .classpath .settings/example build/example .gradle/example; do
-    why=$(ignored_by "$p")
-    if [ -n "$why" ]; then
-        printf '  %-24s IGNORED  %s\n' "$p" "$why"
+    if is_ignored "$p"; then
+        printf '  %-24s IGNORED  %s\n' "$p" "$(ignore_rule "$p")"
     else
-        printf '  %-24s visible to Git\n' "$p"
+        rule=$(ignore_rule "$p")
+        if [ -n "$rule" ]; then
+            printf '  %-24s visible to Git  %s\n' "$p" "$rule"
+        else
+            printf '  %-24s visible to Git\n' "$p"
+        fi
     fi
 done
 
@@ -258,14 +276,14 @@ else
     fi
 fi
 
-repo_attributes=$(find . -path './.git' -prune -o -type f -name .gitattributes -print)
+repo_attributes=$(repo_find -type f -name .gitattributes -print)
 if [ -z "$repo_attributes" ]; then
     printf 'Repository .gitattributes files: none\n'
 else
     printf 'Repository .gitattributes files:\n'
     printf '%s\n' "$repo_attributes" | sed 's/^/  /'
 
-    attribute_rules=$(find . -path './.git' -prune -o -type f -name .gitattributes -exec grep -HnE '(eol=(lf|crlf)|working-tree-encoding=|(^|[[:space:]])text(=auto)?([[:space:]]|$))' {} \; 2>/dev/null || true)
+    attribute_rules=$(repo_find -type f -name .gitattributes -exec grep -HnE '(eol=(lf|crlf)|working-tree-encoding=|(^|[[:space:]])text(=auto)?([[:space:]]|$))' {} \; 2>/dev/null || true)
     if [ -n "$attribute_rules" ]; then
         printf 'Text / EOL / encoding rules found in repository attributes:\n'
         printf '%s\n' "$attribute_rules" | sed 's/^/  /'
@@ -291,7 +309,7 @@ elif ! grep -Eq '(^|[[:space:]])useProjectHistory([[:space:]]|$)' .envrc; then
     printf '%s\n' '- .envrc exists but does not request project Bash history.'
 fi
 
-nested_histories=$(find . -path './.git' -prune -o -type f -name .bash_history ! -path './.bash_history' -print)
+nested_histories=$(repo_find -type f -name .bash_history ! -path './.bash_history' -print)
 if [ -n "$nested_histories" ]; then
     count=$(printf '%s\n' "$nested_histories" | wc -l | tr -d ' ')
     printf '%s\n' "- $count nested .bash_history file(s) should be inspected and probably removed."
@@ -307,7 +325,7 @@ if [ -n "${global_file:-}" ] && [ -f .gitignore ]; then
     fi
 fi
 
-if [ -d .direnv ] && [ -z "$(ignored_by .direnv/)" ]; then
+if [ -d .direnv ] && ! is_ignored .direnv/; then
     printf '%s\n' '- .direnv/ exists but is not ignored.'
 fi
 
@@ -331,6 +349,10 @@ if [ -n "$repo_attributes" ]; then
     printf '%s\n' '- Repository .gitattributes rules are present. These are valid project policy; review them only when line-ending or encoding behavior is surprising.'
 else
     printf '%s\n' '- No repository-specific .gitattributes rules found.'
+fi
+
+if [ -d .claude/worktrees ]; then
+    printf '%s\n' '- .claude/worktrees was excluded from this repository audit.'
 fi
 
 printf '%s\n' '- This script is read-only; it changes nothing.'
