@@ -67,7 +67,7 @@ run_login_probe() {
   local os_id=${3:-}
 
   mkdir -p "$home_dir/some_project"
-  
+
   (
     cd "$home_dir/some_project"
     HOME="$home_dir" \
@@ -101,6 +101,25 @@ run_nonlogin_probe() {
       printf 'PWD=%s\n' \"\$PWD\"
       printf 'PATH=%s\n' \"\$PATH\"
       printf 'ENV=%s\n' \"\${ENV-}\"
+    "
+  )
+}
+
+run_idempotency_probe() {
+  local home_dir=$1
+  local uname_s=$2
+  local os_id=${3:-}
+
+  (
+    cd "$home_dir/some_project"
+    HOME="$home_dir" \
+    PATH="/usr/bin:/bin" \
+    RAY_DOTFILES_UNAME_S="$uname_s" \
+    RAY_DOTFILES_OS_ID="$os_id" \
+    bash --noprofile --norc -i -c "
+      . '$home_dir/dotfiles/shell/environment'
+      . '$home_dir/dotfiles/shell/environment'
+      printf 'PATH=%s\n' \"\$PATH\"
     "
   )
 }
@@ -370,6 +389,13 @@ windows_nonlogin_output="$(run_nonlogin_probe "$windows_home" MINGW64_NT-10.0 ''
 assert_contains "$windows_nonlogin_output" "$windows_home/bin:" "Windows non-login shell missing HOME/bin in PATH"
 assert_contains "$windows_nonlogin_output" "$windows_home/dotfiles/bin:" "Windows non-login shell missing dotfiles/bin in PATH"
 assert_contains "$windows_nonlogin_output" 'ENV='"$windows_home"'/dotfiles/sh/shrc' "Windows non-login shell missing ENV"
+pass "Non-login shells correctly initialize environments"
+
+idempotency_output="$(run_idempotency_probe "$windows_home" MINGW64_NT-10.0 '')"
+if [ "$(printf '%s' "$idempotency_output" | grep -o "$windows_home/bin:" | wc -l)" -ne 1 ]; then
+  fail "Idempotency test failed: PATH has duplicate or missing entries. PATH=$idempotency_output"
+fi
+pass "Environment layer is idempotent"
 
 linux_nonlogin_output="$(run_nonlogin_probe "$linux_home" Linux ubuntu)"
 assert_contains "$linux_nonlogin_output" "$linux_home/bin:" "Linux non-login shell missing HOME/bin in PATH"
