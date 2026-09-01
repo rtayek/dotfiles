@@ -102,37 +102,52 @@ capture_title() {
   local uname_s=$2
   local os_id=$3
   local work_dir=$4
+  local project_name=${5-}
 
   HOME="$home_dir" \
   PATH="/usr/bin:/bin" \
   WT_SESSION=test-session \
+  PROJECT_TERMINAL_NAME="$project_name" \
   RAY_DOTFILES_UNAME_S="$uname_s" \
   RAY_DOTFILES_OS_ID="$os_id" \
   bash --noprofile --norc -i -c "
     cd '$work_dir'
     . '$repo_root/bash/bashrc' >/dev/null
     __ray_prompt_command
+    printf '\nRAY_TEST_BASH_PID=%s\n' \"\$\$\"
   " 2>/dev/null | tr '\033\007' '[]'
+}
+
+assert_project_title() {
+  local actual=$1
+  local project_name=$2
+  local work_dir=$3
+  local shell_name=$4
+  local bash_pid
+
+  bash_pid="$(printf '%s\n' "$actual" | sed -n 's/^RAY_TEST_BASH_PID=\([0-9][0-9]*\)$/\1/p')"
+  [ -n "$bash_pid" ] || fail "$shell_name title test did not capture the Bash PID"
+
+  case "$actual" in
+    *"]0;$project_name | Bash $bash_pid | $work_dir]"*) ;;
+    *) fail "$shell_name title did not include the project, Bash PID, and working directory" ;;
+  esac
 }
 
 win_home="$tmp_root/win-home"
 wsl_home="$tmp_root/wsl-home"
 project_dir="$tmp_root/dotfiles"
-mkdir -p "$project_dir"
+work_dir="$project_dir/src/main"
+mkdir -p "$work_dir"
 make_test_home "$win_home"
 make_test_home "$wsl_home"
 
-win_title="$(capture_title "$win_home" MINGW64_NT-10.0 '' "$project_dir")"
-wsl_title="$(capture_title "$wsl_home" Linux ubuntu "$project_dir")"
+win_title="$(capture_title "$win_home" MINGW64_NT-10.0 '' "$work_dir" Dotfiles)"
+wsl_title="$(capture_title "$wsl_home" Linux ubuntu "$work_dir" Dotfiles)"
+fallback_title="$(capture_title "$win_home" MINGW64_NT-10.0 '' "$project_dir")"
 
-case "$win_title" in
-  *"]0;WIN - dotfiles]"*) ;;
-  *) fail "Windows shell title did not use current folder name" ;;
-esac
+assert_project_title "$win_title" Dotfiles "$work_dir" "Windows"
+assert_project_title "$wsl_title" Dotfiles "$work_dir" "WSL"
+assert_project_title "$fallback_title" dotfiles "$project_dir" "fallback"
 
-case "$wsl_title" in
-  *"]0;WSL - dotfiles]"*) ;;
-  *) fail "WSL shell title did not use current folder name" ;;
-esac
-
-pass "shell startup sets WIN/WSL titles from the current folder name"
+pass "shell startup titles include project, Bash PID, and working directory"

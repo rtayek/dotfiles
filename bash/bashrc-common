@@ -27,9 +27,8 @@ fi
 
 ray_update_terminal_title() {
   [ -n "${WT_SESSION-}" ] || return 0
-  [ -n "${RAY_TERMINAL_TITLE_PREFIX-}" ] || return 0
 
-  local folder_name="${PWD##*/}"
-  [ -n "$folder_name" ] || folder_name="/"
-  printf '\033]0;%s - %s\007' "$RAY_TERMINAL_TITLE_PREFIX" "$folder_name"
+  local project_name="${PROJECT_TERMINAL_NAME:-${PWD##*/}}"
+  [ -n "$project_name" ] || project_name="/"
+  printf '\033]0;%s | Bash %s | %s\007' "$project_name" "$$" "$PWD"
 }
