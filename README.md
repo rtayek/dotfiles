@@ -61,6 +61,7 @@ deploys `settings.json` to Windows Terminal.
 | `git/gitconfig-ubuntu`  | Ubuntu/WSL-specific Git settings |
 | `git/gitignore`         | Global Git excludes: personal workstation noise and safety defaults |
 | `direnv/envrc`          | Shared direnv helpers, sourced by project `.envrc` files |
+| `bin/`                  | Reusable shell inspection and maintenance commands |
 | `docs/`                 | Durable human-facing project notes |
 | `.llm/`                 | Agent working context, handoffs, and reusable LLM material |
 | `shell/`                | Shell-independent environment logic |
@@ -87,9 +88,9 @@ Everything in `real/` is deployed to the target home directory.
 - **Low-vision prompt**: short prompt showing only the current directory name
   (see end of bash/bashrc).
 - **Windows Terminal project colors**: `settings.json` keeps project identity
-  in the terminal background color. Git Bash profiles use cyan tabs and Bash
-  titles prefixed with `WIN`; WSL profiles use orange tabs and Bash titles
-  prefixed with `WSL`.
+  in the terminal background color. Project launchers export
+  `PROJECT_TERMINAL_NAME`; Bash titles show
+  `<ProjectName> | Bash <PID> | <working directory>`.
 - **Platform split**: common Bash behavior lives in `bash/bashrc-common`;
   Windows Git Bash behavior lives in `bash/bashrc-windows`; Ubuntu/WSL
   behavior lives in `bash/bashrc-ubuntu`.
@@ -107,18 +108,38 @@ Everything in `real/` is deployed to the target home directory.
   other credentials explicitly call `loadCentralSecrets`; projects that do
   not need secrets do not load them.
 
+## Terminal process inspection
+
+Run `~/dotfiles/bin/project-processes.sh` from Git Bash to list Windows
+Terminal, OpenConsole, Bash, Git, and Java processes. The `PID` column is the
+MSYS PID shown in each Bash title and accepted by the Bash `kill` builtin. The
+`WINPID` column is the corresponding PID shown by Windows Task Manager. When
+`jps` is available, its `jps -lv` output follows the process table.
+
+The default is inspection only. To terminate a frozen leaf process by its exact
+MSYS PID, use:
+
+    ~/dotfiles/bin/project-processes.sh --term PID
+    ~/dotfiles/bin/project-processes.sh --kill PID
+
+Start with the Git or Java leaf process and use `--kill` only if `--term` does
+not work. The helper refuses to terminate the shared `WindowsTerminal.exe`
+process. Stop Gradle daemons with `./gradlew --stop` when possible.
+
 ## Validation
 
 Run:
 
     bash tests/validate-shell-startup.sh
     bash tests/validate-terminal-settings.sh
+    bash tests/validate-project-processes.sh
     bash tests/validate-git-config.sh
     bash tests/validate-project-history.sh
 
 The validators check shell syntax and startup behavior, terminal configuration,
-platform separation, project history behavior, Git configuration separation,
-Git ignore policy, and generated Git include stubs.
+platform separation, project history behavior, exact-PID process inspection,
+Git configuration separation, Git ignore policy, and generated Git include
+stubs.
 
 `tests/validate-publish-utilities.sh` additionally validates the local
 publish-utilities Gradle workflow when its external utilities JAR is available.
