@@ -1,0 +1,44 @@
+From cdd893ba2ed8505fea4901b6ea2ce9086eb8b4f6 Mon Sep 17 00:00:00 2001
+From: rtayek <rtayek@gmail.com>
+Date: Thu, 3 Sep 2026 20:20:07 +0000
+Subject: [PATCH] Clear stale bug entry and resolve open questions
+
+- bugs.txt: remove stale tab-completion bug entry (not reproducible)
+- working-context.md: resolve old-Ubuntu-distro and bin-split open
+  questions, moving them to a new Resolved section
+---
+ .llm/working-context.md | 7 +++++--
+ bugs.txt                | 2 --
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/.llm/working-context.md b/.llm/working-context.md
+index d1974a2..3bee60d 100644
+--- a/.llm/working-context.md
++++ b/.llm/working-context.md
+@@ -20,11 +20,14 @@ For Markdown organization, keep human-facing documentation in the root or
+ 
+ ## Open questions
+ 
+-- Whether the old Ubuntu 22.04 WSL distro should be removed.
+ - Whether browser project workspaces need automation beyond `project-home.html`.
+ - Which project should be the next concrete WSL migration test.
+ 
+ ## Deferred
+ 
+-- Further `bin` versus `dotfiles/bin` cleanup.
+ - Broader shell style cleanup unless it blocks WSL migration.
++
++## Resolved
++
++- Old Ubuntu 22.04 WSL distro: keeping it around for now, no rush to remove.
++- `bin` versus `dotfiles/bin` split: confirmed clean, no cleanup needed.
+diff --git a/bugs.txt b/bugs.txt
+index 55d87b7..e69de29 100644
+--- a/bugs.txt
++++ b/bugs.txt
+@@ -1,2 +0,0 @@
+-file exoansio workld find in launched bash windows.
+-but ~/Dow tab does not expand in a new bash from the drop down.
+-- 
+2.43.0
+
