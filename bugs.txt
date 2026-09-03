@@ -1,2 +1,0 @@
-file exoansio workld find in launched bash windows.
-but ~/Dow tab does not expand in a new bash from the drop down.

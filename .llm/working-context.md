@@ -20,11 +20,14 @@ For Markdown organization, keep human-facing documentation in the root or
 
 ## Open questions
 
-- Whether the old Ubuntu 22.04 WSL distro should be removed.
 - Whether browser project workspaces need automation beyond `project-home.html`.
 - Which project should be the next concrete WSL migration test.
 
 ## Deferred
 
-- Further `bin` versus `dotfiles/bin` cleanup.
 - Broader shell style cleanup unless it blocks WSL migration.
+
+## Resolved
+
+- Old Ubuntu 22.04 WSL distro: keeping it around for now, no rush to remove.
+- `bin` versus `dotfiles/bin` split: confirmed clean, no cleanup needed.
