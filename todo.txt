@@ -1,7 +1,5 @@
 Current cleanup:
 
-- Reconcile duplicate Clipboard entries in bin/launch-webterms.sh.
-- Make new-project.sh avoid adding a second port for an already-registered project directory.
 - Preserve the executable bit on templates/gradle-eclipse-java/gradlew.
 
 Deferred:
