@@ -1,3 +1,10 @@
-migrate a common set of gitignore file conttents to the proptotype in git/conttents
+Current cleanup:
 
-update the gitignore files in each project to reflect this.
+- Reconcile duplicate Clipboard entries in bin/launch-webterms.sh.
+- Make new-project.sh avoid adding a second port for an already-registered project directory.
+- Preserve the executable bit on templates/gradle-eclipse-java/gradlew.
+
+Deferred:
+
+- Finish the Gradle/Eclipse project-creation helper when a real project needs it.
+- Continue the broader WSL migration after higher-priority ChatMap work.
