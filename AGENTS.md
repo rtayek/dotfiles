@@ -1,1 +1,1 @@
-Read `.llm/index.md` and follow its instructions.
+C:/Users/ray/eclipse-workspace/dotmdfiles/real/AGENTS.md
