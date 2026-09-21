@@ -2,3 +2,7 @@ __ray_bash_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 [ -f "$__ray_bash_dir/bootstrap" ] && . "$__ray_bash_dir/bootstrap"
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+if [ -f "$HOME/dotfiles/bin/launch-webterms.sh" ]; then
+    "$HOME/dotfiles/bin/launch-webterms.sh"
+fi
+
