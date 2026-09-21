@@ -68,6 +68,7 @@
 <body>
   <h1>PROJECT_NAME project links</h1>
   <ul>
+    <li><a href="rayproject://PROJECT_NAME">Launch Bash Boxes</a></li>
     <li><a href="BASH_URL" target="_blank">Bash</a></li>
     <li><a href="file:///C:/Users/ray/bin/web/editor.html" target="_blank">Editor</a></li>
     <li><a href="CHATGPT_URL" target="_blank">ChatGPT</a></li>
