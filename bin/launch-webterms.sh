@@ -1,6 +1,14 @@
 #!/bin/sh
 
 WEBTERM="$HOME/bin/webterm.sh"
+PROJECTS_FILE="${PROJECTS_FILE:-$HOME/eclipse-workspace/dotmdfiles/projects.txt}"
+
+expand_home() {
+    case "$1" in
+        '~/'*) printf '%s/%s\n' "$HOME" "${1#~/}" ;;
+        *) printf '%s\n' "$1" ;;
+    esac
+}
 
 ensure_webterm() {
     port=$1
@@ -22,11 +30,16 @@ ensure_webterm() {
     "$WEBTERM" --detach --no-browser "$port" "$directory"
 }
 
-ensure_webterm 1031 /c/Users/ray/dotfiles
-ensure_webterm 1032 /c/Users/ray/eclipse-workspace/dotmdfiles
-ensure_webterm 1033 /c/Users/ray/eclipse-workspace/chatmap
-ensure_webterm 1034 /c/Users/ray/eclipse-workspace/five-rules
-ensure_webterm 1035 /c/Users/ray/eclipse-workspace/system
-ensure_webterm 1036 /c/Users/ray/eclipse-workspace/clipboard
-ensure_webterm 1037 /c/Users/ray/eclipse-workspace/money
-ensure_webterm 1038 /c/Users/ray/eclipse-workspace/openworker-eval-2026-09-1
+[ -f "$PROJECTS_FILE" ] || {
+    echo "error: missing project registry: $PROJECTS_FILE" >&2
+    exit 1
+}
+
+while IFS='|' read -r name path port color rest; do
+    case "$name" in
+        ''|'#'*) continue ;;
+    esac
+    [ -n "$port" ] || continue
+    directory=$(expand_home "$path")
+    ensure_webterm "$port" "$directory"
+done < "$PROJECTS_FILE"
