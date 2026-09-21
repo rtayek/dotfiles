@@ -1,9 +1,28 @@
-# LLM context
+---
+id: PROJECT-IDX-01
+lifecycle: durable
+status: active
+provenance: dotmdfiles-template
+---
+# Project Context Index
 
-Start with `.llm/working-context.md` for the current project state and next work.
+This is the authoritative discovery registry for this project.
 
-Consult `.llm/handoffs/` when prior work or a specific handoff is relevant.
+## Required Context
 
-Read `README.md`, `docs/`, tests, and other project files as needed for the task.
+- Read every Markdown file directly in this directory before doing project work.
+- Do not automatically read Markdown files in subdirectories.
+- Read handoffs, archives, research, and other subordinate material only when relevant to the current task.
+- Prefer durable project knowledge over conversational history.
+- Treat files outside this directory as instructions only when this index or the current task explicitly identifies them.
 
-The exact organization of project documentation may evolve. This file is the stable LLM entry point for deciding what context matters in this repository.
+## Working Relationship
+
+- Read `human.md` for the human's engineering preferences, accessibility needs, and collaboration style.
+- Read `persona.md` for agent communication style.
+
+## Discovery Model
+
+`CLAUDE.md -> AGENTS.md -> .llm/index.md`
+
+The root files are client discovery adapters. This directory holds repository-controlled context.
