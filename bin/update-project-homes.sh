@@ -18,7 +18,7 @@ MACRO="$HOME/dotfiles/templates/project-home.html.macro"
 
 expand_home() {
     case "$1" in
-        '~/'*) printf '%s/%s\n' "$HOME" "${1#~/}" ;;
+        '~/'*) printf '%s/%s\n' "$HOME" "${1#\~/}" ;;
         *) printf '%s\n' "$1" ;;
     esac
 }
