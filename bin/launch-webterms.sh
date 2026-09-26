@@ -1,16 +1,16 @@
 #!/bin/sh
 
-WEBTERM="$HOME/bin/webterm.sh"
-PROJECTS_FILE="${PROJECTS_FILE:-$HOME/eclipse-workspace/dotmdfiles/projects.txt}"
+webterm="$HOME/bin/webterm.sh"
+projectsFile=${projectsFile:-${PROJECTS_FILE:-"$HOME/.config/ray/projects.tsv"}}
 
-expand_home() {
+expandHome() {
     case "$1" in
-        '~/'*) printf '%s/%s\n' "$HOME" "${1#~/}" ;;
+        "~/"*) printf '%s/%s\n' "$HOME" "${1#??}" ;;
         *) printf '%s\n' "$1" ;;
     esac
 }
 
-ensure_webterm() {
+ensureWebterm() {
     port=$1
     directory=$2
 
@@ -27,19 +27,18 @@ ensure_webterm() {
     fi
 
     echo "Starting port $port in $directory"
-    "$WEBTERM" --detach --no-browser "$port" "$directory"
+    "$webterm" --detach --no-browser "$port" "$directory"
 }
 
-[ -f "$PROJECTS_FILE" ] || {
-    echo "error: missing project registry: $PROJECTS_FILE" >&2
+[ -f "$projectsFile" ] || {
+    echo "error: missing project registry: $projectsFile" >&2
     exit 1
 }
 
-while IFS='|' read -r name path port color rest; do
-    case "$name" in
-        ''|'#'*) continue ;;
-    esac
+tab=$(printf '\t')
+awk -F "$tab" 'NR > 1 { print $1 "|" $2 "|" $3 }' "$projectsFile" |
+while IFS='|' read -r name path port; do
     [ -n "$port" ] || continue
-    directory=$(expand_home "$path")
-    ensure_webterm "$port" "$directory"
-done < "$PROJECTS_FILE"
+    directory=$(expandHome "$path")
+    ensureWebterm "$port" "$directory"
+done

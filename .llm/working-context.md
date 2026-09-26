@@ -9,7 +9,9 @@ tooling are also in place.
 
 Project launching is now centered on:
 
-- `bin/launch-webterms.sh` as the project-to-port registry
+- System's `projects.tsv` as the authoritative project metadata registry
+- `~/.config/ray/projects.tsv` as its deployed runtime copy
+- `bin/launch-webterms.sh` as a registry consumer and webterm launcher
 - `templates/project-home.html.macro` as the browser launcher template
 - per-project `.envrc` files for project identity and shell history
 - `new-project.sh` in the separate `bin` repository as the front-door setup
@@ -59,7 +61,7 @@ priority.
 ## Resolved
 
 - Shell startup V3 is implemented and tested.
-- `dotfiles/bin/launch-webterms.sh` is the authoritative webterm registry.
+- System's `projects.tsv` is the authoritative registry; `launch-webterms.sh` consumes its deployed copy.
 - `new-project.sh` is idempotent for already-registered project directories.
 - Duplicate Clipboard webterm registration has been removed.
 - No per-project Windows Terminal profile is needed.
