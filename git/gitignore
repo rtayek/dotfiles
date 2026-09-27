@@ -43,3 +43,6 @@ replay_pid*
 
 # Personal secrets safety net
 .env
+.project
+.classpath
+.settings/
