@@ -13,6 +13,21 @@ stub files that point back into the repository. To install or repair them, run:
 generates a small platform-aware `~/.gitconfig`, and, under Windows/Git Bash,
 deploys `settings.json` to Windows Terminal.
 
+Cross-project identity is not owned here. The System repository owns the
+authoritative `projects.tsv` registry and deploys an ordinary runtime copy to:
+
+    ~/.config/ray/projects.tsv
+
+That registry carries the shared project facts used by launchers, currently:
+
+    name    path    port    color    chatgpt-url    claude-url
+
+Dotfiles owns the shell, terminal, webterm, and project-home implementation
+that consumes those facts. Runtime consumers should use the deployed registry
+rather than depend on the System checkout. The custom lower-camel environment
+variable `projectsFile` may override the deployed path; `PROJECTS_FILE` is a
+legacy compatibility spelling during migration.
+
 ## Who's on first (the load chain)
 
     Bash login
@@ -61,7 +76,8 @@ deploys `settings.json` to Windows Terminal.
 | `git/gitconfig-ubuntu`  | Ubuntu/WSL-specific Git settings |
 | `git/gitignore`         | Global Git excludes: personal workstation noise and safety defaults |
 | `direnv/envrc`          | Shared direnv helpers, sourced by project `.envrc` files |
-| `bin/`                  | Reusable shell inspection and maintenance commands |
+| `bin/`                  | Reusable shell inspection, project-home, and webterm commands |
+| `templates/`            | Reusable project-home template |
 | `docs/`                 | Durable human-facing project notes |
 | `.llm/`                 | Agent working context, handoffs, and reusable LLM material |
 | `shell/`                | Shell-independent environment logic |
@@ -91,6 +107,15 @@ Everything in `real/` is deployed to the target home directory.
   in the terminal background color. Project launchers export
   `PROJECT_TERMINAL_NAME`; Bash titles show
   `<ProjectName> | Bash <PID> | <working directory>`.
+- **Project home pages**: `templates/project-home.html.macro` defines the
+  high-contrast project page. `bin/update-project-homes.sh` regenerates the
+  per-project `project-home.html` files while preserving existing ChatGPT and
+  Claude conversation URLs when the registry has no saved URL.
+- **Project webterms**: `bin/launch-webterms.sh` ensures the registered local
+  webterm ports are listening without unnecessarily restarting active sessions.
+- **Project Bash boxes**: project-home pages expose `rayproject://<name>` links.
+  The URL handler in the `bin` repository launches or restarts only that
+  project's Windows Terminal workspace.
 - **Platform split**: common Bash behavior lives in `bash/bashrc-common`;
   Windows Git Bash behavior lives in `bash/bashrc-windows`; Ubuntu/WSL
   behavior lives in `bash/bashrc-ubuntu`.
@@ -107,6 +132,35 @@ Everything in `real/` is deployed to the target home directory.
 - **Secrets**: never in this repo. Projects that actually need API keys or
   other credentials explicitly call `loadCentralSecrets`; projects that do
   not need secrets do not load them.
+
+## Project launcher workflow
+
+System owns the authoritative project registry. After changing
+`system/projects.tsv`, deploy it from the System checkout:
+
+    sh deploy-projects.sh
+
+Dotfiles then consumes the deployed copy at `~/.config/ray/projects.tsv`.
+The normal launcher flow is:
+
+    projects.tsv
+      -> ~/.config/ray/projects.tsv
+        -> launch-webterms.sh
+        -> update-project-homes.sh
+        -> rayproject:// links and Windows Terminal launchers
+
+To refresh project home pages after registry or template changes:
+
+    sh ~/dotfiles/bin/update-project-homes.sh
+
+To ensure registered browser Bash terminals are running:
+
+    sh ~/dotfiles/bin/launch-webterms.sh
+
+The per-project `project-home.html` files are generated artifacts. The template
+and registry should contain the durable shared facts; project-specific current
+ChatGPT or Claude URLs may be preserved from an existing generated page until
+they are explicitly stored in the registry.
 
 ## Terminal process inspection
 
@@ -195,10 +249,6 @@ Secret loading and other environment behavior are explicit opt-ins.
 
 ## TODO / revisit later
 
-- Build a project browser/workspace launcher: one command per major project
-  should open a dedicated browser window with that project's LLMs, GitHub page,
-  and other useful web resources. Keep project URL sets in small configuration
-  files rather than creating one-off launcher scripts for every project.
 - Replace or supplement the machine-specific `.java-home` mechanism with a
   portable project Java-version mechanism when multiple JDKs become necessary.
 - Review the Windows-only global attributes file currently referenced as
