@@ -200,18 +200,15 @@ publish-utilities Gradle workflow when its external utilities JAR is available.
 
 ## Markdown and LLM context
 
-The stable LLM entry chain is:
+The stable governing entry chain is:
 
-    CLAUDE.md -> AGENTS.md -> .llm/index.md
+    CLAUDE.md -> AGENTS.md
 
-`CLAUDE.md` and `AGENTS.md` are small compatibility entry points for tools that
-expect those filenames. `.llm/index.md` is the project-controlled dispatcher:
-it decides which working context, handoffs, documentation, tests, or other files
-matter for the current project.
-
-The exact organization behind `.llm/index.md` may evolve from project to project.
-Durable human-facing documentation belongs in the root or `docs/`; LLM-specific
-working material may live under `.llm/` when that is useful.
+`CLAUDE.md` is a small compatibility adapter. `AGENTS.md` is the self-contained
+governing document; its project-context section names secondary documents only
+when a task requires them. Durable human-facing documentation belongs in the
+root or `docs/`; LLM-specific working material may live under `.llm/` when that
+is useful, but it is not automatically governing.
 
 ## Git ignore policy
 
@@ -228,8 +225,8 @@ There are two relevant ignore files:
 Repository build products and toolchain rules belong in each repository's
 `.gitignore`, not in the global excludes file.
 
-Eclipse metadata is not globally ignored. Whether `.project`, `.classpath`,
-and `.settings/` are tracked is decided per repository.
+Eclipse metadata (`.project`, `.classpath`, and `.settings/`) is globally
+ignored. A repository that intentionally tracks it can override that default.
 
 The tracked `.envrc` in this repository is reusable configuration, not private
 state. It loads the shared direnv helper library and calls `useProjectHistory`.
