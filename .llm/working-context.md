@@ -40,6 +40,12 @@ hold for now.
 Treat dotfiles as mostly maintenance work. Finish only small cleanup items that
 make the existing workflow dependable, then return attention to ChatMap.
 
+A gradual project-location migration is now in progress across System, bin,
+dotmdfiles, and dotfiles. The registry path is authoritative; dotfiles
+consumers must not assume that registered projects live under one Eclipse
+workspace. Existing project locations remain unchanged while tooling is made
+location-independent.
+
 WSL migration remains a longer-term direction, but it is not the current
 priority.
 
@@ -57,6 +63,8 @@ priority.
   becomes annoying.
 - Moving everyday development fully to WSL until higher-priority ChatMap work
   is in better shape.
+- Adding project category, build-system, IDE, or workspace metadata before a
+  concrete migration need demonstrates which fields are useful.
 
 ## Resolved
 
