@@ -5,9 +5,44 @@ plugins {
 group = "com.tayek"
 version = "0.2"
 
+def projectsFile = new File(
+    System.getenv("projectsFile") ?: System.getenv("PROJECTS_FILE")
+        ?: new File(System.getProperty("user.home"), ".config/ray/projects.tsv").path
+)
+
+def projectPath = { String projectName ->
+    if (!projectsFile.isFile()) {
+        throw new GradleException("Missing project registry: ${projectsFile}")
+    }
+
+    def row = projectsFile.readLines("UTF-8")
+        .drop(1)
+        .collect { it.split("\\t", -1) }
+        .find { it.length >= 2 && it[0] == projectName }
+
+    if (row == null || !row[1]) {
+        throw new GradleException("Project is not registered: ${projectName}")
+    }
+
+    def value = row[1]
+    if (value == "~") {
+        return new File(System.getProperty("user.home"))
+    }
+    if (value.startsWith("~/")) {
+        return new File(System.getProperty("user.home"), value.substring(2))
+    }
+    if (new File(value).isAbsolute()) {
+        return new File(value)
+    }
+
+    def root = System.getenv("projectsRoot") ?: System.getenv("PROJECTS_ROOT")
+        ?: new File(System.getProperty("user.home"), "eclipse-workspace").path
+    return new File(root, value)
+}
+
 def defaultUtilitiesJar = new File(
-    System.getProperty("user.home"),
-    "eclipse-workspace/util/build/libs/utilities-0.0.jar"
+    projectPath("util"),
+    "build/libs/utilities-0.0.jar"
 )
 def utilitiesJar = project.hasProperty("utilitiesJar")
     ? file(project.property("utilitiesJar"))
