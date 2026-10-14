@@ -30,6 +30,13 @@ awk -F "$tab" 'NR > 1 { print $2 }' "$projectsFile" | (
         if ! git -C "$project" status --short --branch; then
             status=1
         fi
+
+        printf 'branches: \n'
+
+        if ! git -C "$project" branch -a; then
+            status=1
+        fi
+
         printf '\n'
     done
     exit "$status"
