@@ -42,7 +42,7 @@ def projectPath = { String projectName ->
 
 def defaultUtilitiesJar = new File(
     projectPath("util"),
-    "build/libs/utilities-0.0.jar"
+    "build/libs/util-0.0.jar"
 )
 def utilitiesJar = project.hasProperty("utilitiesJar")
     ? file(project.property("utilitiesJar"))

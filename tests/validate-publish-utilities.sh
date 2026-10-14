@@ -28,7 +28,7 @@ case "$registry_path" in
   *) util_dir="$projectsRoot/$registry_path" ;;
 esac
 
-default_jar="$util_dir/build/libs/utilities-0.0.jar"
+default_jar="$util_dir/build/libs/util-0.0.jar"
 
 [ -f "$default_jar" ] || fail "default utilities jar is missing: $default_jar"
 gradle -p "$publish_dir" verifyUtilitiesJar --no-daemon >/dev/null
